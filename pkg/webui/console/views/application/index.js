@@ -36,6 +36,7 @@ import ApplicationPayloadFormatters from '../application-payload-formatters'
 import ApplicationIntegrationsWebhooks from '../application-integrations-webhooks'
 import ApplicationIntegrationsPubsubs from '../application-integrations-pubsubs'
 import ApplicationIntegrationsMqtt from '../application-integrations-mqtt'
+import ApplicationIntegrationsLoracloudDAS from '../application-integrations-loracloudDAS'
 
 import {
   getApplication,
@@ -65,7 +66,7 @@ import Devices from '../devices'
 import PropTypes from '../../../lib/prop-types'
 
 @connect(
-  function(state, props) {
+  function (state, props) {
     return {
       appId: props.match.params.appId,
       fetching: selectApplicationFetching(state) || selectApplicationRightsFetching(state),
@@ -86,7 +87,7 @@ import PropTypes from '../../../lib/prop-types'
   ({ appId, loadData }) => loadData(appId),
   ({ fetching, application }) => fetching || !Boolean(application),
 )
-@withSideNavigation(function(props) {
+@withSideNavigation(function (props) {
   const matchedUrl = props.match.url
   const { rights } = props
 
@@ -163,6 +164,12 @@ import PropTypes from '../../../lib/prop-types'
             icon: 'extension',
             exact: false,
           },
+          {
+            title: sharedMessages.loracloudDAS,
+            path: `${matchedUrl}/integrations/loracloudDAS`,
+            icon: 'extension',
+            exact: false,
+          },
         ],
       },
       {
@@ -188,7 +195,7 @@ import PropTypes from '../../../lib/prop-types'
     ],
   }
 })
-@withBreadcrumb('apps.single', function(props) {
+@withBreadcrumb('apps.single', function (props) {
   const {
     appId,
     application: { name },
@@ -241,6 +248,10 @@ export default class Application extends React.Component {
           <Route
             path={`${match.path}/integrations/pubsubs`}
             component={ApplicationIntegrationsPubsubs}
+          />
+          <Route
+            path={`${match.path}/integrations/loracloudDAS`}
+            component={ApplicationIntegrationsLoracloudDAS}
           />
           <NotFoundRoute />
         </Switch>
