@@ -23,3 +23,6 @@ export const mqttUrl = new RegExp('^(mqtts?)://[^\\s/$.?#].[^\\s]*$')
 export const latitude = /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/
 export const longitude = /^\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/
 export const int32 = /^-?\d+$/
+
+// TODO: Implementation
+export const loracloudToken = /^[a-zA-Z0-9]/

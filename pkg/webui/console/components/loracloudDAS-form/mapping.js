@@ -62,8 +62,8 @@ export const mapFormValuesToLoracloudDAS = function (values, appId) {
 
 export const blankValues = {
   loracloudDAS_id: undefined,
-  base_url: undefined,
+  base_url: 'https://dms.loracloud.com',
   format: undefined,
   token: '',
-  port: '',
+  port: '200',
 }

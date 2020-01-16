@@ -26,7 +26,7 @@ import Message from '../../../lib/components/message'
 import KeyValueMap from '../../../components/key-value-map'
 import ModalButton from '../../../components/button/modal-button'
 import sharedMessages from '../../../lib/shared-messages'
-import { id as loracloudDASIdRegexp, apiKey as webhookAPIKeyRegexp } from '../../lib/regexp'
+import { id as loracloudDASIdRegexp, loracloudToken as loracloudToken } from '../../lib/regexp'
 import PropTypes from '../../../lib/prop-types'
 
 import { mapLoracloudDASToFormValues, mapFormValuesToLoracloudDAS, blankValues } from './mapping'
@@ -36,22 +36,12 @@ const m = defineMessages({
   deleteLoracloudDAS: 'Delete Loracloud integration',
   modalWarning:
     'Are you sure you want to delete integration "{loracloudDASId}"? Deleting an integration cannot be undone!',
-  headers: 'Headers',
-  headersKeyPlaceholder: 'Authorization',
-  headersValuePlaceholder: 'Bearer my-auth-token',
-  headersAdd: 'Add header entry',
-  headersValidateRequired: 'All header entry values are required. Please remove empty entries.',
   token: 'LoRaCloud DAS token',
   tokenDesc:
     'The token will be provided to LoRaCloud DAS.',
-  port: '200',
+  portPlaceholder: '200',
   portDesc: 'LoRaWAN port used for DAS messages.',
 })
-
-const headerCheck = headers =>
-  headers === undefined ||
-  (headers instanceof Array &&
-    (headers.length === 0 || headers.every(header => header.key !== '' && header.value !== '')))
 
 const validationSchema = Yup.object().shape({
   token_id: Yup.string()
@@ -59,12 +49,10 @@ const validationSchema = Yup.object().shape({
     .min(2, sharedMessages.validateTooShort)
     .max(25, sharedMessages.validateTooLong)
     .required(sharedMessages.validateRequired),
-  format: Yup.string().required(sharedMessages.validateRequired),
-  headers: Yup.array().test('has no empty string values', m.headersValidateRequired, headerCheck),
   base_url: Yup.string()
     .url(sharedMessages.validateUrl)
     .required(sharedMessages.validateRequired),
-  token: Yup.string().matches(webhookAPIKeyRegexp, sharedMessages.validateFormat),
+  token: Yup.string().matches(loracloudToken, sharedMessages.validateFormat),
 })
 
 @bind
@@ -86,7 +74,7 @@ export default class LoracloudDASForm extends Component {
     await this.setState({ error: '' })
 
     try {
-      const result = await onSubmit(loraclouddas)
+      const result = await onSubmit(loracloudDAS)
 
       resetForm(values)
       await onSubmitSuccess(result)
@@ -115,7 +103,7 @@ export default class LoracloudDASForm extends Component {
     const { error } = this.state
     let initialValues = blankValues
     if (update && initialLoracloudDasValue) {
-      initialValues = mapLoracloudDAStoFormValues(initialLoracloudDasValue)
+      initialValues = mapLoracloudDAStoFormValues(initialLoracloudDASValue)
     }
 
     return (
@@ -136,18 +124,9 @@ export default class LoracloudDASForm extends Component {
           autoFocus
           disabled={update}
         />
-        <LoracloudDASFormatSelector horizontal name="format" required />
-        <Form.Field
-          name="headers"
-          title={m.headers}
-          keyPlaceholder={m.headersKeyPlaceholder}
-          valuePlaceholder={m.headersValuePlaceholder}
-          addMessage={m.headersAdd}
-          component={KeyValueMap}
-        />
         <Form.Field
           name="base_url"
-          title={sharedMessages.LoracloudDASBaseUrl}
+          title={sharedMessages.loracloudDASBaseUrl}
           placeholder="https://dms.loracloud.com"
           component={Input}
           required
@@ -158,6 +137,7 @@ export default class LoracloudDASForm extends Component {
           component={Input}
           description={m.tokenDesc}
           code
+          required
         />
         <Form.Field
           name="port"
@@ -202,7 +182,7 @@ LoracloudDASForm.propTypes = {
   onDeleteSuccess: PropTypes.func,
   onDeleteFailure: PropTypes.func,
   update: PropTypes.bool.isRequired,
-  initialLoracloudValue: PropTypes.object,
+  initialLoracloudDASValue: PropTypes.object,
 }
 
 LoracloudDASForm.defaultProps = {
