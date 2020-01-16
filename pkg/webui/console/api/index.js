@@ -148,6 +148,14 @@ export default {
       delete: ttnClient.Applications.PubSubs.deleteById.bind(ttnClient.Applications.PubSubs),
       getFormats: ttnClient.Applications.PubSubs.getFormats.bind(ttnClient.Applications.PubSubs),
     },
+    loracloudDASs: {
+      list: ttnClient.Applications.LoracloudDASs.getAll.bind(ttnClient.Applications.LoracloudDASs),
+      get: ttnClient.Applications.LoracloudDASs.getById.bind(ttnClient.Applications.LoracloudDASs),
+      create: ttnClient.Applications.LoracloudDASs.create.bind(ttnClient.Applications.LoracloudDASs),
+      update: ttnClient.Applications.LoracloudDASs.updateById.bind(ttnClient.Applications.LoracloudDASs),
+      delete: ttnClient.Applications.LoracloudDASs.deleteById.bind(ttnClient.Applications.LoracloudDASs),
+      getFormats: ttnClient.Applications.LoracloudDASs.getFormats.bind(ttnClient.Applications.LoracloudDASs),
+    },
   },
   devices: {
     list: ttnClient.Applications.Devices.getAll.bind(ttnClient.Applications.Devices),

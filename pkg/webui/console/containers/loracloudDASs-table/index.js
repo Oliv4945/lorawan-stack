@@ -21,12 +21,12 @@ import Message from '../../../lib/components/message'
 
 import sharedMessages from '../../../lib/shared-messages'
 
-import { getLoracloudDASsList } from '../../../console/store/actions/loracloudDAS'
+import { getLoracloudDASsList } from '../../../console/store/actions/loracloudDASs'
 import {
   selectLoracloudDASs,
   selectLoracloudDASsTotalCount,
   selectLoracloudDASsFetching,
-} from '../../../console/store/selectors/loracloudDAS'
+} from '../../../console/store/selectors/loracloudDASs'
 
 const m = defineMessages({
   format: 'Format',
@@ -52,31 +52,31 @@ const headers = [
 ]
 
 @bind
-export default class LoracloudDASTable extends React.Component {
+export default class LoracloudDASsTable extends React.Component {
   constructor(props) {
     super(props)
 
     const { appId } = props
-    this.getLoracloudDASList = () => getLoracloudDASList(appId)
+    this.getLoracloudDASsList = () => getLoracloudDASsList(appId)
   }
 
   baseDataSelector(state) {
     return {
-      loracloudDAS: selectLoracloudDAS(state),
-      totalCount: selectLoracloudDASTotalCount(state),
-      fetching: selectLoracloudDASFetching(state),
+      loracloudDASs: selectLoracloudDASs(state),
+      totalCount: selectLoracloudDASsTotalCount(state),
+      fetching: selectLoracloudDASsFetching(state),
     }
   }
 
   render() {
     return (
       <FetchTable
-        entity="loracloudDAS"
+        entity="loracloudDASs"
         addMessage={sharedMessages.addLoracloudDAS}
         headers={headers}
-        getItemsAction={this.getLoracloudDASList}
+        getItemsAction={this.getLoracloudDASsList}
         baseDataSelector={this.baseDataSelector}
-        tableTitle={<Message content={sharedMessages.loracloudDAS} />}
+        tableTitle={<Message content={sharedMessages.loracloudDASs} />}
         {...this.props}
       />
     )

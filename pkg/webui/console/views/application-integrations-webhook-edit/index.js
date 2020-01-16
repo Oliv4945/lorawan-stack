@@ -67,7 +67,7 @@ const webhookEntitySelector = [
     fetching: selectWebhookFetching(state),
     error: selectWebhookError(state),
   }),
-  function(dispatch, { match }) {
+  function (dispatch, { match }) {
     const { appId, webhookId } = match.params
     return {
       getWebhook: () => dispatch(getWebhook(appId, webhookId, webhookEntitySelector)),
@@ -79,7 +79,7 @@ const webhookEntitySelector = [
   ({ getWebhook }) => getWebhook(),
   ({ fetching, webhook }) => fetching || !Boolean(webhook),
 )
-@withBreadcrumb('apps.single.integrations.edit', function(props) {
+@withBreadcrumb('apps.single.integrations.edit', function (props) {
   const {
     appId,
     match: {

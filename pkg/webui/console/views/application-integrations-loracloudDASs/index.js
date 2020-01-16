@@ -21,7 +21,7 @@ import Breadcrumb from '../../../components/breadcrumbs/breadcrumb'
 import { withBreadcrumb } from '../../../components/breadcrumbs/context'
 import ErrorView from '../../../lib/components/error-view'
 import SubViewError from '../error/sub-view'
-import ApplicationLoracloudDASList from '../application-integrations-loracloudDAS-list'
+import ApplicationLoracloudDASsList from '../application-integrations-loracloudDASs-list'
 import ApplicationLoracloudDASAdd from '../application-integrations-loracloudDAS-add'
 import ApplicationLoracloudDASEdit from '../application-integrations-loracloudDAS-edit'
 import withFeatureRequirement from '../../lib/components/with-feature-requirement'
@@ -34,14 +34,14 @@ import PropTypes from '../../../lib/prop-types'
 @withFeatureRequirement(mayViewApplicationEvents, {
   redirect: ({ appId }) => `/applications/${appId}`,
 })
-@withBreadcrumb('apps.single.integrations.loracloudDAS', ({ appId }) => (
+@withBreadcrumb('apps.single.integrations.loracloudDASs', ({ appId }) => (
   <Breadcrumb
-    path={`/applications/${appId}/integrations/loracloudDAS`}
+    path={`/applications/${appId}/integrations/loracloudDASs`}
     icon="extension"
-    content={sharedMessages.loracloudDAS}
+    content={sharedMessages.loracloudDASs}
   />
 ))
-export default class ApplicationLoracloudDAS extends React.Component {
+export default class ApplicationLoracloudDASs extends React.Component {
   static propTypes = {
     match: PropTypes.match.isRequired,
   }
@@ -52,7 +52,7 @@ export default class ApplicationLoracloudDAS extends React.Component {
     return (
       <ErrorView ErrorComponent={SubViewError}>
         <Switch>
-          <Route exact path={`${match.path}`} component={ApplicationLoracloudDASList} />
+          <Route exact path={`${match.path}`} component={ApplicationLoracloudDASsList} />
           <Route exact path={`${match.path}/add`} component={ApplicationLoracloudDASAdd} />
           <Route path={`${match.path}/:loracloudDASId`} component={ApplicationLoracloudDASEdit} />
         </Switch>

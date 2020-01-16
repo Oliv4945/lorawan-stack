@@ -15,7 +15,7 @@
 import React, { Component } from 'react'
 import { Container, Row, Col } from 'react-grid-system'
 
-import LoracloudDASTable from '../../containers/loracloudDAS-table'
+import LoracloudDASsTable from '../../containers/loracloudDASs-table'
 
 import IntlHelmet from '../../../lib/components/intl-helmet'
 import sharedMessages from '../../../lib/shared-messages'
@@ -23,7 +23,7 @@ import sharedMessages from '../../../lib/shared-messages'
 import PAGE_SIZES from '../../constants/page-sizes'
 import PropTypes from '../../../lib/prop-types'
 
-export default class ApplicationLoracloudDASList extends Component {
+export default class ApplicationLoracloudDASsList extends Component {
   static propTypes = {
     match: PropTypes.match.isRequired,
   }
@@ -36,7 +36,7 @@ export default class ApplicationLoracloudDASList extends Component {
         <Row>
           <IntlHelmet title={sharedMessages.integrations} />
           <Col>
-            <LoracloudDASTable pageSize={PAGE_SIZES.REGULAR} appId={appId} />
+            <LoracloudDASsTable pageSize={PAGE_SIZES.REGULAR} appId={appId} />
           </Col>
         </Row>
       </Container>

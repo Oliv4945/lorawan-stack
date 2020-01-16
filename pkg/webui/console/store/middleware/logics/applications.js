@@ -16,6 +16,7 @@ import * as applications from '../../actions/applications'
 import * as link from '../../actions/link'
 import * as webhookFormats from '../../actions/webhook-formats'
 import * as pubsubFormats from '../../actions/pubsub-formats'
+import * as loracloudDASFormats from '../../actions/loracloudDAS-formats'
 
 import api from '../../../api'
 import { isNotFoundError } from '../../../../lib/errors/utils'
@@ -68,15 +69,15 @@ const getApplicationsLogic = createRequestLogic({
 
     const data = query
       ? await api.applications.search(
-          {
-            page,
-            limit,
-            id_contains: query,
-            name_contains: query,
-            order,
-          },
-          selectors,
-        )
+        {
+          page,
+          limit,
+          id_contains: query,
+          name_contains: query,
+          order,
+        },
+        selectors,
+      )
       : await api.applications.list({ page, limit, order }, selectors)
 
     return { entities: data.applications, totalCount: data.totalCount }
@@ -135,6 +136,14 @@ const getPubsubFormatsLogic = createRequestLogic({
   },
 })
 
+const getLoracloudDASFormatsLogic = createRequestLogic({
+  type: loracloudDASFormats.GET_LORACLOUDDAS_FORMATS,
+  async process() {
+    const { formats } = await api.application.loracloudDASs.getFormats()
+    return formats
+  },
+})
+
 export default [
   getApplicationLogic,
   updateApplicationLogic,
@@ -143,6 +152,7 @@ export default [
   getApplicationsRightsLogic,
   getWebhookFormatsLogic,
   getPubsubFormatsLogic,
+  getLoracloudDASFormatsLogic,
   getApplicationLinkLogic,
   ...createEventsConnectLogics(
     applications.SHARED_NAME,

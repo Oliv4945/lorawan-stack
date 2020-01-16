@@ -35,7 +35,7 @@ import PropTypes from '../../../lib/prop-types'
     appId: selectSelectedApplicationId(state),
   }),
   dispatch => ({
-    navigateToList: appId => dispatch(push(`/applications/${appId}/integrations/loracloudDAS`)),
+    navigateToList: appId => dispatch(push(`/applications/${appId}/integrations/loracloudDASs`)),
   }),
 )
 @withBreadcrumb('apps.single.integrations.add', function (props) {
@@ -58,7 +58,7 @@ export default class ApplicationLoracloudDASAdd extends Component {
   async handleSubmit(loracloudDAS) {
     const { appId } = this.props
 
-    await api.application.loracloudDAS.create(appId, loracloudDAS)
+    await api.application.loracloudDASs.create(appId, loracloudDAS)
   }
 
   handleSubmitSuccess() {

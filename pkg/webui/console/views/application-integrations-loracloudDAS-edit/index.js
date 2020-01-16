@@ -32,9 +32,9 @@ import {
   selectSelectedLoracloudDAS,
   selectLoracloudDASFetching,
   selectLoracloudDASError,
-} from '../../store/selectors/loracloudDAS'
+} from '../../store/selectors/loracloudDASs'
 import { selectSelectedApplicationId } from '../../store/selectors/applications'
-import { getLoracloudDAS } from '../../store/actions/loracloudDAS'
+import { getLoracloudDAS } from '../../store/actions/loracloudDASs'
 
 import api from '../../api'
 import PropTypes from '../../../lib/prop-types'
@@ -56,7 +56,7 @@ const loracloudDASEntitySelector = [
 @connect(
   state => ({
     appId: selectSelectedApplicationId(state),
-    webhook: selectSelectedLoracloudDAS(state),
+    loracloudDAS: selectSelectedLoracloudDAS(state),
     fetching: selectLoracloudDASFetching(state),
     error: selectLoracloudDASError(state),
   }),
@@ -64,13 +64,13 @@ const loracloudDASEntitySelector = [
     const { appId, LoracloudDASId } = match.params
     return {
       getLoracloudDAS: () => dispatch(getLoracloudDAS(appId, loracloudDASId, loracloudDASEntitySelector)),
-      navigateToList: () => dispatch(replace(`/applications/${appId}/integrations/loracloudDAS`)),
+      navigateToList: () => dispatch(replace(`/applications/${appId}/integrations/loracloudDASs`)),
     }
   },
 )
 @withRequest(
   ({ getLoracloudDAS }) => getLoracloudDAS(),
-  ({ fetching, webhook }) => fetching || !Boolean(webhook),
+  ({ fetching, loracloudDAS }) => fetching || !Boolean(loracloudDAS),
 )
 @withBreadcrumb('apps.single.integrations.edit', function (props) {
   const {
@@ -112,7 +112,7 @@ export default class ApplicationLoracloudDASEdit extends Component {
       patch.headers = updatedLoracloudDAS.headers
     }
 
-    await api.application.loracloudDAS.update(appId, loracloudDASId, patch)
+    await api.application.loracloudDASs.update(appId, loracloudDASId, patch)
   }
 
   handleSubmitSuccess() {
@@ -130,7 +130,7 @@ export default class ApplicationLoracloudDASEdit extends Component {
       },
     } = this.props
 
-    await api.application.loracloudDAS.delete(appId, loracloudDASId)
+    await api.application.loracloudDASs.delete(appId, loracloudDASId)
   }
 
   async handleDeleteSuccess() {

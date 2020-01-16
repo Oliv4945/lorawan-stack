@@ -12,36 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { GET_WEBHOOK, GET_WEBHOOK_SUCCESS, GET_WEBHOOKS_LIST_SUCCESS } from '../actions/webhooks'
-import { getWebhookId } from '../../../lib/selectors/id'
+import { GET_LORACLOUDDAS, GET_LORACLOUDDAS_SUCCESS, GET_LORACLOUDDASS_LIST_SUCCESS } from '../actions/loracloudDASs'
+import { getLoracloudDASId } from '../../../lib/selectors/id'
 
 const defaultState = {
-  selectedWebhook: null,
+  selectedLoracloudDAS: null,
   totalCount: undefined,
   entities: {},
 }
 
-const webhooks = function (state = defaultState, { type, payload }) {
+const loracloudDASs = function (state = defaultState, { type, payload }) {
   switch (type) {
-    case GET_WEBHOOK:
+    case GET_LORACLOUDDAS:
       return {
         ...state,
-        selectedWebhook: payload.webhookId,
+        selectedLoracloudDAS: payload.loracloudDASId,
       }
-    case GET_WEBHOOK_SUCCESS:
+    case GET_LORACLOUDDAS_SUCCESS:
       return {
         ...state,
         entities: {
           ...state.entities,
-          [getWebhookId(payload)]: payload,
+          [getLoracloudDASId(payload)]: payload,
         },
       }
-    case GET_WEBHOOKS_LIST_SUCCESS:
+    case GET_LORACLOUDDASS_LIST_SUCCESS:
       return {
         ...state,
         entities: {
-          ...payload.entities.reduce((acc, webhook) => {
-            acc[getWebhookId(webhook)] = webhook
+          ...payload.entities.reduce((acc, loracloudDAS) => {
+            acc[getLoracloudDASId(loracloudDAS)] = loracloudDAS
             return acc
           }, {}),
         },
@@ -52,4 +52,4 @@ const webhooks = function (state = defaultState, { type, payload }) {
   }
 }
 
-export default webhooks
+export default loracloudDASs

@@ -226,4 +226,18 @@ PropTypes.webhook = PropTypes.shape({
 })
 PropTypes.webhooks = PropTypes.arrayOf(PropTypes.webhook)
 
+PropTypes.loracloudDAS = PropTypes.shape({
+  base_url: PropTypes.string.isRequired,
+  created_at: PropTypes.string.isRequired,
+  format: PropTypes.oneOf(['json', 'protobuf']).isRequired,
+  ids: PropTypes.shape({
+    application_ids: PropTypes.shape({
+      application_id: PropTypes.string,
+    }).isRequired,
+    loracloudDAS_id: PropTypes.string.isRequired,
+  }).isRequired,
+  updated_at: PropTypes.string,
+})
+PropTypes.loracloudDASs = PropTypes.arrayOf(PropTypes.loracloudDAS)
+
 export default PropTypes

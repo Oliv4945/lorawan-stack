@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { GET_WEBHOOK_FORMATS_BASE } from '../actions/webhook-formats'
-import { createFetchingSelector } from './fetching'
-import { createErrorSelector } from './error'
+import { createRequestActions } from './lib'
 
-const selectWebhookFormatsStore = state => state.webhookFormats
-
-export const selectWebhookFormats = function (state) {
-  const store = selectWebhookFormatsStore(state)
-
-  return store.formats || {}
-}
-
-export const selectWebhookFormatsError = createErrorSelector(GET_WEBHOOK_FORMATS_BASE)
-export const selectWebhookFormatsFetching = createFetchingSelector(GET_WEBHOOK_FORMATS_BASE)
+export const GET_LORACLOUDDAS_FORMATS_BASE = 'GET_LORACLOUDDAS_FORMATS'
+export const [
+  {
+    request: GET_LORACLOUDDAS_FORMATS,
+    success: GET_LORACLOUDDAS_FORMATS_SUCCESS,
+    failure: GET_LORACLOUDDAS_FORMATS_FAILURE,
+  },
+  {
+    request: getLORACLOUDDASFormats,
+    success: getLORACLOUDDASFormatsSuccess,
+    failure: getLORACLOUDDASFormatsFailure,
+  },
+] = createRequestActions(GET_LORACLOUDDAS_FORMATS_BASE)

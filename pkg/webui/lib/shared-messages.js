@@ -138,7 +138,7 @@ export default defineMessages({
   logout: 'Logout',
   longitude: 'Longitude',
   longitudeDesc: 'The East-West position in degrees, where 0 is the Prime Meridian (Greenwich)',
-  loracloudDAS: 'LoRaCloud DAS',
+  loracloudDASs: 'LoRaCloud DAS',
   lorawanInformation: 'LoRaWAN Information',
   lorawanOptions: 'LoRaWAN Options',
   macVersion: 'MAC Version',

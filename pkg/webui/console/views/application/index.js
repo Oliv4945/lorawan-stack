@@ -36,7 +36,7 @@ import ApplicationPayloadFormatters from '../application-payload-formatters'
 import ApplicationIntegrationsWebhooks from '../application-integrations-webhooks'
 import ApplicationIntegrationsPubsubs from '../application-integrations-pubsubs'
 import ApplicationIntegrationsMqtt from '../application-integrations-mqtt'
-import ApplicationIntegrationsLoracloudDAS from '../application-integrations-loracloudDAS'
+import ApplicationIntegrationsLoracloudDASs from '../application-integrations-loracloudDASs'
 
 import {
   getApplication,
@@ -165,8 +165,8 @@ import PropTypes from '../../../lib/prop-types'
             exact: false,
           },
           {
-            title: sharedMessages.loracloudDAS,
-            path: `${matchedUrl}/integrations/loracloudDAS`,
+            title: sharedMessages.loracloudDASs,
+            path: `${matchedUrl}/integrations/loracloudDASs`,
             icon: 'extension',
             exact: false,
           },
@@ -250,8 +250,8 @@ export default class Application extends React.Component {
             component={ApplicationIntegrationsPubsubs}
           />
           <Route
-            path={`${match.path}/integrations/loracloudDAS`}
-            component={ApplicationIntegrationsLoracloudDAS}
+            path={`${match.path}/integrations/loracloudDASs`}
+            component={ApplicationIntegrationsLoracloudDASs}
           />
           <NotFoundRoute />
         </Switch>

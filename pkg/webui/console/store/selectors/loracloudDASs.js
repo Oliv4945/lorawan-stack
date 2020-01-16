@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { GET_LORACLOUDDAS_BASE, GET_LORACLOUDDASS_LIST_BASE } from '../actions/loracloudDAS'
+import { GET_LORACLOUDDAS_BASE, GET_LORACLOUDDASS_LIST_BASE } from '../actions/loracloudDASs'
 import { createFetchingSelector } from './fetching'
 import { createErrorSelector } from './error'
 
-const selectLoracloudDASStore = state => state.loracloudDAS
+const selectLoracloudDASStore = state => state.loracloudDASs
 
 // LoracloudDAS
 export const selectLoracloudDASEntityStore = state => selectLoracloudDASStore(state).entities

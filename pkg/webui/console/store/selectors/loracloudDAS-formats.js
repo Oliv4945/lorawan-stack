@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { GET_WEBHOOK_FORMATS_BASE } from '../actions/webhook-formats'
+import { GET_LORACLOUDDAS_FORMATS_BASE } from '../actions/loracloudDAS-formats'
 import { createFetchingSelector } from './fetching'
 import { createErrorSelector } from './error'
 
-const selectWebhookFormatsStore = state => state.webhookFormats
+const selectLoracloudDASFormatsStore = state => state.LoracloudDASFormats
 
-export const selectWebhookFormats = function (state) {
-  const store = selectWebhookFormatsStore(state)
+export const selectLoracloudDASFormats = function (state) {
+  const store = selectLoracloudDASFormatsStore(state)
 
   return store.formats || {}
 }
 
-export const selectWebhookFormatsError = createErrorSelector(GET_WEBHOOK_FORMATS_BASE)
-export const selectWebhookFormatsFetching = createFetchingSelector(GET_WEBHOOK_FORMATS_BASE)
+export const selectLoracloudDASFormatsError = createErrorSelector(GET_LORACLOUDDAS_FORMATS_BASE)
+export const selectLoracloudDASFormatsFetching = createFetchingSelector(GET_LORACLOUDDAS_FORMATS_BASE)

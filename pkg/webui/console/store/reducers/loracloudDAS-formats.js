@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { GET_WEBHOOK_FORMATS_BASE } from '../actions/webhook-formats'
-import { createFetchingSelector } from './fetching'
-import { createErrorSelector } from './error'
+import { GET_LORACLOUDDAS_FORMATS_SUCCESS } from '../actions/loracloudDAS-formats'
 
-const selectWebhookFormatsStore = state => state.webhookFormats
-
-export const selectWebhookFormats = function (state) {
-  const store = selectWebhookFormatsStore(state)
-
-  return store.formats || {}
+const defaultState = {
+  formats: undefined,
 }
 
-export const selectWebhookFormatsError = createErrorSelector(GET_WEBHOOK_FORMATS_BASE)
-export const selectWebhookFormatsFetching = createFetchingSelector(GET_WEBHOOK_FORMATS_BASE)
+const loraclouddass = function (state = defaultState, { type, payload }) {
+  switch (type) {
+    case GET_LORACLOUDDAS_FORMATS_SUCCESS:
+      return {
+        ...state,
+        formats: payload,
+      }
+    default:
+      return state
+  }
+}
+
+export default loraclouddass

@@ -49,6 +49,8 @@ import webhooks from './webhooks'
 import webhookFormats from './webhook-formats'
 import pubsubs from './pubsubs'
 import pubsubFormats from './pubsub-formats'
+import loracloudDASs from './loracloudDASs'
+import loracloudDASFormats from './loracloudDAS-formats'
 import deviceTemplateFormats from './device-template-formats'
 import organizations from './organizations'
 import { createNamedPaginationReducer } from './pagination'
@@ -69,6 +71,8 @@ export default history =>
     deviceTemplateFormats,
     pubsubs,
     pubsubFormats,
+    loracloudDASs,
+    loracloudDASFormats,
     configuration,
     organizations,
     apiKeys,

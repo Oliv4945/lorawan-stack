@@ -22,6 +22,7 @@ import Link from './link'
 import Collaborators from './collaborators'
 import Webhooks from './webhooks'
 import PubSubs from './pubsubs'
+import LoracloudDASs from './loracloudDASs'
 
 /**
  * Applications Class provides an abstraction on all applications and manages
@@ -60,6 +61,7 @@ class Applications {
     })
     this.Webhooks = new Webhooks(api.ApplicationWebhookRegistry)
     this.PubSubs = new PubSubs(api.ApplicationPubSubRegistry)
+    this.LoracloudDASs = new LoracloudDASs(api.ApplicationLoracloudDASRegistry)
   }
 
   _responseTransform(response, single = true) {
