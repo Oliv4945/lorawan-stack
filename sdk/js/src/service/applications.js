@@ -61,7 +61,23 @@ class Applications {
     })
     this.Webhooks = new Webhooks(api.ApplicationWebhookRegistry)
     this.PubSubs = new PubSubs(api.ApplicationPubSubRegistry)
-    this.LoracloudDASs = new LoracloudDASs(api.ApplicationLoracloudDASRegistry)
+    this.LoracloudDASs = new LoracloudDASs(api.ApplicationPackageRegistry)
+    // dev_id = new EndDeviceIdentifier("test-id", "")
+    // console.log(api.ApplicationPackageRegistry.List(dev_id))
+    /*this.Devices.getAll('test-app', '', ['name']).then(function (ans) {
+      console.log(ans)
+    })
+    this.LoracloudDASs.getAll('test-app').then(function (ans) {
+      console.log(ans)
+    })
+    this.LoracloudDASs.listAssociations('test-app', 'test-device', []).then(function (ans) {
+      console.log(ans)
+    })*/
+    /*
+        this.LoracloudDASs.create('test-app', 'test-device', '200').then(function (ans) {
+      console.log(ans)
+    })
+    */
   }
 
   _responseTransform(response, single = true) {

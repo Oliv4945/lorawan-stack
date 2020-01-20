@@ -58,7 +58,14 @@ export default class ApplicationLoracloudDASAdd extends Component {
   async handleSubmit(loracloudDAS) {
     const { appId } = this.props
 
-    await api.application.loracloudDASs.create(appId, loracloudDAS)
+    console.log("passe handleSubmit")
+    console.log(appId)
+    console.log(loracloudDAS)
+    var devId = loracloudDAS.device_id
+    var port = parseInt(loracloudDAS.port, 10)
+    console.log("handleSubmit - ${devId} - ${port}")
+
+    await api.application.loracloudDASs.create(appId, devId, port, loracloudDAS.token)
   }
 
   handleSubmitSuccess() {

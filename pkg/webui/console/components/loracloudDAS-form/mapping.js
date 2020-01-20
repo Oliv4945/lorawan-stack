@@ -27,8 +27,8 @@ const mapLoracloudDASHeadersTypeToFormValue = headersType =>
 export const mapLoracloudDASToFormValues = loracloudDAS => ({
   loracloudDAS_id: loracloudDAS.ids.loracloudDAS_id,
   base_url: loracloudDAS.base_url,
+  device_id: loracloudDAS.device_id,
   format: loracloudDAS.format,
-  headers: mapLoracloudDASHeadersTypeToFormValue(loracloudDAS.headers),
   token: loracloudDAS.token,
   port: loracloudDAS.port,
 })
@@ -54,7 +54,7 @@ export const mapFormValuesToLoracloudDAS = function (values, appId) {
     },
     base_url: values.base_url,
     format: values.format,
-    headers: mapHeadersTypeFormValueToLoracloudDASHeadersType(values.headers),
+    device_id: values.device_id,
     token: values.token,
     port: values.port,
   }

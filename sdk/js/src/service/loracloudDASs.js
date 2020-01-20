@@ -20,29 +20,77 @@ class LoracloudDASs {
   }
 
   async getAll(appId) {
-    const result = await this._api.List({
-      routeParams: { 'application_ids.application_id': appId },
+    console.log("GetAll")
+    const result = await this._api.ListAssociations({
+      routeParams: {
+        'ids.application_ids.application_id': appId,
+        'ids.device_id': 'test-device'
+      },
     })
+    // OGZ Workaround to have correct results in "entities"
+    console.log(result)
+    if (!isNaN(result.headers['x-total-count'])) {
+      delete result.headers['x-total-count']
+    }
 
-    return Marshaler.payloadListResponse('loracloudDASs', result)
+    console.log(Marshaler.payloadListResponse('associations', result))
+    return Marshaler.payloadListResponse('associations', result)
+  }
+
+  async listAssociations(appId, devId, selector) {
+    const fieldMask = Marshaler.selectorToFieldMask(selector)
+    const result = await this._api.ListAssociations({
+      routeParams: {
+        'ids.application_ids.application_id': appId,
+        'ids.device_id': devId,
+      },
+    },
+      fieldMask
+    )
+    console.log("listAssociations")
+    console.log(Marshaler.payloadListResponse('associations', result))
+    return Marshaler.payloadListResponse('associations', result)
+  }
+
+  async list(appId, devId, selector) {
+    const fieldMask = Marshaler.selectorToFieldMask(selector)
+    const result = await this._api.List({
+      routeParams: {
+        'ids.application_ids.application_id': appId,
+        'ids.device_id': devId,
+      },
+    },
+      fieldMask
+    )
+    console.log("list 2")
+    console.log(Marshaler.payloadListResponse('associations', result))
+    return Marshaler.payloadListResponse('associations', result)
   }
 
   async create(
     appId,
-    loracloudDAS,
-    mask = Marshaler.fieldMaskFromPatch(loracloudDAS, this._api.SetAllowedFieldMaskPaths),
+    devId,
+    port,
+    token,
   ) {
-    const result = await this._api.Set(
+    const result = await this._api.SetAssociation(
       {
         routeParams: {
-          'loracloudDAS.ids.application_ids.application_id': appId,
+          'association.ids.end_device_ids.application_ids.application_id': appId,
+          'association.ids.end_device_ids.device_id': devId,
+          'association.ids.f_port': port,
         },
       },
       {
-        loracloudDAS,
-        field_mask: Marshaler.fieldMask(mask),
-      },
+        association: {
+          package_name: 'lora-cloud-device-management-v1',
+          data: { api_key: token }
+        },
+        field_mask: { paths: ['package_name', 'data'] },
+      }
     )
+    console.log("create")
+    console.log(result)
 
     return Marshaler.payloadSingleResponse(result)
   }

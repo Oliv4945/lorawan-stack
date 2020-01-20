@@ -32,7 +32,7 @@ import PropTypes from '../../../lib/prop-types'
 import { mapLoracloudDASToFormValues, mapFormValuesToLoracloudDAS, blankValues } from './mapping'
 
 const m = defineMessages({
-  idPlaceholder: 'my-new-loracloud-das-id',
+  idPlaceholder: 'device-id',
   deleteLoracloudDAS: 'Delete Loracloud integration',
   modalWarning:
     'Are you sure you want to delete integration "{loracloudDASId}"? Deleting an integration cannot be undone!',
@@ -44,11 +44,6 @@ const m = defineMessages({
 })
 
 const validationSchema = Yup.object().shape({
-  token_id: Yup.string()
-    .matches(loracloudDASIdRegexp, sharedMessages.validateAlphanum)
-    .min(2, sharedMessages.validateTooShort)
-    .max(25, sharedMessages.validateTooLong)
-    .required(sharedMessages.validateRequired),
   base_url: Yup.string()
     .url(sharedMessages.validateUrl)
     .required(sharedMessages.validateRequired),
@@ -116,8 +111,8 @@ export default class LoracloudDASForm extends Component {
       >
         <Message component="h4" content={sharedMessages.generalInformation} />
         <Form.Field
-          name="loracloudDAS_id"
-          title={sharedMessages.loracloudDASId}
+          name="device_id"
+          title={sharedMessages.devID}
           placeholder={m.idPlaceholder}
           component={Input}
           required

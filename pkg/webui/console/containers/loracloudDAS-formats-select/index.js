@@ -23,7 +23,7 @@ import {
 import { getLoracloudFormats } from '../../store/actions/loracloud-formats'
 
 const m = defineMessages({
-  title: 'Loracloud Format',
+  title: 'LoRaCloud Format',
   warning: 'Could not retrieve the list of available loracloud formats',
 })
 

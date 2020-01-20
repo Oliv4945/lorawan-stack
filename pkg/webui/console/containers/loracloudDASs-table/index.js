@@ -29,24 +29,25 @@ import {
 } from '../../../console/store/selectors/loracloudDASs'
 
 const m = defineMessages({
-  format: 'Format',
-  baseUrl: 'Base URL',
+  packageName: 'Package name',
+  port: 'Port',
+  deviceName: 'Device ID'
 })
 
 const headers = [
   {
-    name: 'ids.loracloudDAS_id',
-    displayName: sharedMessages.id,
+    name: 'package_name',
+    displayName: m.packageName,
     width: 35,
   },
   {
-    name: 'format',
-    displayName: m.format,
+    name: 'ids.end_device_ids.device_id',
+    displayName: m.deviceName,
     width: 20,
   },
   {
-    name: 'base_url',
-    displayName: m.baseUrl,
+    name: 'ids.f_port',
+    displayName: m.port,
     width: 25,
   },
 ]
