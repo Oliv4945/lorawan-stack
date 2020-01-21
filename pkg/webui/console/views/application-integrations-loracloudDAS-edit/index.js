@@ -45,8 +45,8 @@ import PropTypes from '../../../lib/prop-types'
 
 const m = defineMessages({
   editLoracloudDAS: 'Edit LoRaCloud integration',
-  updateSuccess: 'Successfully updated LoRaCloud integration',
-  deleteSuccess: 'Successfully deleted LoRaCloud integration',
+  updateSuccess: 'Successfully updated LoRaCloud DAS integration',
+  deleteSuccess: 'Successfully deleted LoRaCloud DAS integration',
 })
 
 const loracloudDASEntitySelector = [
@@ -70,7 +70,7 @@ const loracloudDASEntitySelector = [
     console.log(loracloudDASId)
     return {
       getLoracloudDAS: () => dispatch(getLoracloudDAS(appId, loracloudDASId, deviceId, loracloudDASEntitySelector)),
-      navigateToList: () => dispatch(replace(`/applications/${appId}/integrations/loracloudDASs/${deviceId}/${loracloudDASId}`)),
+      navigateToList: () => dispatch(replace(`/applications/${appId}/integrations/loracloudDASs`)),
     }
   },
 )
@@ -135,11 +135,10 @@ export default class ApplicationLoracloudDASEdit extends Component {
     const {
       appId,
       match: {
-        params: { loracloudDASId },
+        params: { loracloudDASId, deviceId },
       },
     } = this.props
-
-    await api.application.loracloudDASs.delete(appId, loracloudDASId)
+    await api.application.loracloudDASs.delete(appId, deviceId, loracloudDASId)
   }
 
   async handleDeleteSuccess() {

@@ -134,11 +134,12 @@ class LoracloudDASs {
     return Marshaler.payloadSingleResponse(result)
   }
 
-  async deleteById(appId, loracloudDASId) {
-    const result = await this._api.Delete({
+  async deleteById(appId, deviceId, loracloudDASId) {
+    const result = await this._api.DeleteAssociation({
       routeParams: {
-        'application_ids.application_id': appId,
-        loracloudDAS_id: loracloudDASId,
+        'end_device_ids.application_ids.application_id': appId,
+        'end_device_ids.device_id': deviceId,
+        'f_port': loracloudDASId,
       },
     })
 

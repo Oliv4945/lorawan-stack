@@ -33,9 +33,9 @@ import { mapLoracloudDASToFormValues, mapFormValuesToLoracloudDAS, blankValues }
 
 const m = defineMessages({
   idPlaceholder: 'device-id',
-  deleteLoracloudDAS: 'Delete Loracloud integration',
+  deleteLoracloudDAS: 'Delete LoRaCloud DAS integration',
   modalWarning:
-    'Are you sure you want to delete integration "{loracloudDASId}"? Deleting an integration cannot be undone!',
+    'Are you sure you want to delete integration port "{port}" of "{deviceId}"? Deleting an integration cannot be undone!',
   token: 'LoRaCloud DAS token',
   tokenDesc:
     'The token will be provided to LoRaCloud DAS.',
@@ -157,7 +157,10 @@ export default class LoracloudDASForm extends Component {
               message={m.deleteLoracloudDAS}
               modalData={{
                 message: {
-                  values: { loracloudDASId: initialLoracloudDASValue.ids.loracloudDAS_id },
+                  values: {
+                    port: initialLoracloudDASValue.ids.f_port,
+                    deviceId: initialLoracloudDASValue.ids.end_device_ids.device_id
+                  },
                   ...m.modalWarning,
                 },
               }}
