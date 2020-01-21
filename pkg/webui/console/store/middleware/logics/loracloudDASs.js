@@ -21,10 +21,10 @@ const getLoracloudDASLogic = createRequestLogic({
   type: loracloudDASs.GET_LORACLOUDDAS,
   async process({ action }) {
     const {
-      payload: { appId, loracloudDASId },
+      payload: { appId, loracloudDASId, deviceId },
       meta: { selector },
     } = action
-    return api.application.loracloudDASs.get(appId, loracloudDASId, selector)
+    return api.application.loracloudDASs.get(appId, loracloudDASId, deviceId, selector)
   },
 })
 

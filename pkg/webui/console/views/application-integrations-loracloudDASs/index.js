@@ -54,7 +54,7 @@ export default class ApplicationLoracloudDASs extends React.Component {
         <Switch>
           <Route exact path={`${match.path}`} component={ApplicationLoracloudDASsList} />
           <Route exact path={`${match.path}/add`} component={ApplicationLoracloudDASAdd} />
-          <Route path={`${match.path}/:loracloudDASId`} component={ApplicationLoracloudDASEdit} />
+          <Route path={`${match.path}/:deviceId/:loracloudDASId`} component={ApplicationLoracloudDASEdit} />
         </Switch>
       </ErrorView>
     )

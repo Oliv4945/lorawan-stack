@@ -92,11 +92,10 @@ export const getPubsubId = function (pubsub = {}) {
 }
 
 export const getLoracloudDASId = function (loracloudDAS = {}) {
-  console.log("getLoracloudDASId")
-  console.log(loracloudDAS)
-  console.log(require('crypto').createHash('sha1').update(`${loracloudDAS.created_at}`).digest('hex'))
-  var hash = require('crypto').createHash('sha1').update(`${loracloudDAS.created_at}`).digest('hex');
-  return hash
+  console.log(["getLoracloudDASId", loracloudDAS])
+  const loracloudDASId = `${getByPath(loracloudDAS, 'ids.end_device_ids.device_id')}#${getByPath(loracloudDAS, 'ids.f_port')}`
+  console.log(["id", loracloudDASId])
+  return getByPath(loracloudDAS, 'ids.f_port')
 }
 
 export const getUserId = function (user = {}) {

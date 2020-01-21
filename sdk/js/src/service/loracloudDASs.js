@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import Marshaler from '../util/marshaler'
+import loracloudDASs from '../../../../pkg/webui/console/store/middleware/logics/loracloudDASs'
 
 class LoracloudDASs {
   constructor(registry) {
@@ -95,18 +96,19 @@ class LoracloudDASs {
     return Marshaler.payloadSingleResponse(result)
   }
 
-  async getById(appId, loracloudDASId, selector) {
+  async getById(appId, loracloudDASId, deviceId, selector) {
     const fieldMask = Marshaler.selectorToFieldMask(selector)
-    const result = await this._api.Get(
+    const result = await this._api.GetAssociation(
       {
         routeParams: {
-          'ids.application_ids.application_id': appId,
-          'ids.loracloudDAS_id': loracloudDASId,
+          'ids.end_device_ids.application_ids.application_id': appId,
+          'ids.end_device_ids.device_id': deviceId,
+          'ids.f_port': loracloudDASId,
         },
       },
       fieldMask,
     )
-
+    console.log(["getbyid", Marshaler.payloadSingleResponse(result)])
     return Marshaler.payloadSingleResponse(result)
   }
 

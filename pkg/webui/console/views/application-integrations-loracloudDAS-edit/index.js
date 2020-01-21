@@ -34,6 +34,10 @@ import {
   selectLoracloudDASError,
 } from '../../store/selectors/loracloudDASs'
 import { selectSelectedApplicationId } from '../../store/selectors/applications'
+import {
+  selectSelectedDeviceId,
+  selectSelectedDeviceFormatters,
+} from '../../store/selectors/devices'
 import { getLoracloudDAS } from '../../store/actions/loracloudDASs'
 
 import api from '../../api'
@@ -46,25 +50,27 @@ const m = defineMessages({
 })
 
 const loracloudDASEntitySelector = [
-  'base_url',
-  'format',
-  'headers',
-  'token',
-  'port',
+  'package_name',
+  'data',
 ]
 
 @connect(
   state => ({
     appId: selectSelectedApplicationId(state),
     loracloudDAS: selectSelectedLoracloudDAS(state),
+    deviceId: selectSelectedDeviceId(state),
     fetching: selectLoracloudDASFetching(state),
     error: selectLoracloudDASError(state),
   }),
   function (dispatch, { match }) {
-    const { appId, LoracloudDASId } = match.params
+    const { appId, deviceId, loracloudDASId } = match.params
+    console.log("dispatch")
+    console.log(dispatch)
+    console.log(match)
+    console.log(loracloudDASId)
     return {
-      getLoracloudDAS: () => dispatch(getLoracloudDAS(appId, loracloudDASId, loracloudDASEntitySelector)),
-      navigateToList: () => dispatch(replace(`/applications/${appId}/integrations/loracloudDASs`)),
+      getLoracloudDAS: () => dispatch(getLoracloudDAS(appId, loracloudDASId, deviceId, loracloudDASEntitySelector)),
+      navigateToList: () => dispatch(replace(`/applications/${appId}/integrations/loracloudDASs/${deviceId}/${loracloudDASId}`)),
     }
   },
 )
@@ -76,12 +82,15 @@ const loracloudDASEntitySelector = [
   const {
     appId,
     match: {
-      params: { loracloudDASId },
+      params: {
+        loracloudDASId,
+        deviceId
+      },
     },
   } = props
   return (
     <Breadcrumb
-      path={`/applications/${appId}/integrations/${loracloudDASId}`}
+      path={`/applications/${appId}/integrations/${deviceId}/${loracloudDASId}`}
       icon="general_settings"
       content={sharedMessages.edit}
     />

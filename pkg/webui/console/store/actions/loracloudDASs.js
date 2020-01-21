@@ -20,8 +20,8 @@ export const [
   { request: getLoracloudDAS, success: getLoracloudDASSuccess, failure: getLoracloudDASFailure },
 ] = createRequestActions(
   GET_LORACLOUDDAS_BASE,
-  (appId, loracloudDASId) => ({ appId, loracloudDASId }),
-  (appId, loracloudDASId, selector) => ({ selector }),
+  (appId, loracloudDASId, deviceId) => ({ appId, loracloudDASId, deviceId }),
+  (appId, loracloudDASId, deviceId, selector) => ({ selector }),
 )
 
 export const GET_LORACLOUDDASS_LIST_BASE = 'GET_LORACLOUDDASS_LIST'
