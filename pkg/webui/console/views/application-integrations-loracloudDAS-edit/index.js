@@ -90,7 +90,7 @@ const loracloudDASEntitySelector = [
   } = props
   return (
     <Breadcrumb
-      path={`/applications/${appId}/integrations/${deviceId}/${loracloudDASId}`}
+      path={`/applications/${appId}/integrations/loracloudDASs/${deviceId}/${loracloudDASId}`}
       icon="general_settings"
       content={sharedMessages.edit}
     />

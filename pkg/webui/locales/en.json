@@ -110,7 +110,7 @@
   "console.components.gateway-data-form.index.gatewayDescDescription": "Optional gateway description; can also be used to save notes about the gateway",
   "console.components.loracloudDAS-form.index.idPlaceholder": "device-id",
   "console.components.loracloudDAS-form.index.deleteLoracloudDAS": "Delete Loracloud integration",
-  "console.components.loracloudDAS-form.index.modalWarning": "Are you sure you want to delete integration \"{loracloudDASId}\"? Deleting an integration cannot be undone!",
+  "console.components.loracloudDAS-form.index.modalWarning": "Are you sure you want to delete integration \"{loracloudDAS_id}\"? Deleting an integration cannot be undone!",
   "console.components.loracloudDAS-form.index.token": "LoRaCloud DAS token",
   "console.components.loracloudDAS-form.index.tokenDesc": "The token will be provided to LoRaCloud DAS.",
   "console.components.loracloudDAS-form.index.portPlaceholder": "200",

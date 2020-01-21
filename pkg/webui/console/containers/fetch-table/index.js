@@ -32,7 +32,7 @@ const DEFAULT_PAGE = 1
 const DEFAULT_TAB = 'all'
 const ALLOWED_TABS = ['all']
 
-const filterValidator = function(filters) {
+const filterValidator = function (filters) {
   if (!ALLOWED_TABS.includes(filters.tab)) {
     filters.tab = DEFAULT_TAB
   }
@@ -48,7 +48,7 @@ const filterValidator = function(filters) {
   return filters
 }
 
-@connect(function(state, props) {
+@connect(function (state, props) {
   const base = props.baseDataSelector(state, props)
 
   return {

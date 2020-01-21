@@ -52,6 +52,8 @@ const headers = [
   },
 ]
 
+const getItemPathPrefix = item => `/${item.ids.end_device_ids.device_id}/${item.ids.f_port}`
+
 @bind
 export default class LoracloudDASsTable extends React.Component {
   constructor(props) {
@@ -78,8 +80,11 @@ export default class LoracloudDASsTable extends React.Component {
         getItemsAction={this.getLoracloudDASsList}
         baseDataSelector={this.baseDataSelector}
         tableTitle={<Message content={sharedMessages.loracloudDASs} />}
+        getItemPathPrefix={getItemPathPrefix}
         {...this.props}
       />
+
+
     )
   }
 }
