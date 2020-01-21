@@ -94,11 +94,12 @@ export default class LoracloudDASForm extends Component {
   }
 
   render() {
-    const { update, initialLoracloudDasValue } = this.props
+    const { update, initialLoracloudDASValue } = this.props
     const { error } = this.state
     let initialValues = blankValues
-    if (update && initialLoracloudDasValue) {
-      initialValues = mapLoracloudDAStoFormValues(initialLoracloudDASValue)
+    console.log(["initialLoracloudDASValue", this, initialLoracloudDASValue])
+    if (update && initialLoracloudDASValue) {
+      initialValues = mapLoracloudDASToFormValues(initialLoracloudDASValue)
     }
 
     return (
