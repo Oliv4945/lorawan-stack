@@ -84,7 +84,7 @@ class LoracloudDASs {
       {
         association: {
           package_name: 'lora-cloud-device-management-v1',
-          data: { api_key: token }
+          data: { token: token }
         },
         field_mask: { paths: ['package_name', 'data'] },
       }
