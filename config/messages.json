@@ -1223,18 +1223,18 @@
       "file": "gateways.go"
     }
   },
-  "error:cmd/ttn-lw-cli/commands:gateway_server_disabled": {
+  "error:cmd/ttn-lw-cli/commands:inconsistent_end_device_eui": {
     "translations": {
-      "en": "Gateway Server is disabled"
+      "en": "given end device EUIs do not match registered EUIs"
     },
     "description": {
       "package": "cmd/ttn-lw-cli/commands",
       "file": "end_devices.go"
     }
   },
-  "error:cmd/ttn-lw-cli/commands:inconsistent_end_device_eui": {
+  "error:cmd/ttn-lw-cli/commands:join_server_disabled": {
     "translations": {
-      "en": "given end device EUIs do not match registered EUIs"
+      "en": "Join Server is disabled"
     },
     "description": {
       "package": "cmd/ttn-lw-cli/commands",
@@ -1257,6 +1257,15 @@
     "description": {
       "package": "cmd/ttn-lw-cli/commands",
       "file": "end_device_templates.go"
+    }
+  },
+  "error:cmd/ttn-lw-cli/commands:network_server_disabled": {
+    "translations": {
+      "en": "Network Server is disabled"
+    },
+    "description": {
+      "package": "cmd/ttn-lw-cli/commands",
+      "file": "end_devices.go"
     }
   },
   "error:cmd/ttn-lw-cli/commands:no_api_key_id": {
@@ -3404,6 +3413,24 @@
   "error:pkg/gatewayserver/io:downlink_path": {
     "translations": {
       "en": "invalid downlink path"
+    },
+    "description": {
+      "package": "pkg/gatewayserver/io",
+      "file": "io.go"
+    }
+  },
+  "error:pkg/gatewayserver/io:no_absolute_time": {
+    "translations": {
+      "en": "no absolute time provided for class B downlink"
+    },
+    "description": {
+      "package": "pkg/gatewayserver/io",
+      "file": "io.go"
+    }
+  },
+  "error:pkg/gatewayserver/io:no_rx_delay": {
+    "translations": {
+      "en": "no Rx delay provided for class A downlink"
     },
     "description": {
       "package": "pkg/gatewayserver/io",

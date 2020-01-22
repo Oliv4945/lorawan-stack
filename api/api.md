@@ -1837,7 +1837,7 @@ SDKs are responsible for combining (if desired) the three.
 | `min_frequency` | [`uint64`](#uint64) |  | Minimum frequency the device is capable of using (Hz). Stored in Network Server. Copied on creation from template identified by version_ids, if any or from the home Network Server device profile, if any. |
 | `max_frequency` | [`uint64`](#uint64) |  | Maximum frequency the device is capable of using (Hz). Stored in Network Server. Copied on creation from template identified by version_ids, if any or from the home Network Server device profile, if any. |
 | `supports_join` | [`bool`](#bool) |  | The device supports join (it's OTAA). Copied on creation from template identified by version_ids, if any or from the home Network Server device profile, if any. |
-| `resets_join_nonces` | [`bool`](#bool) |  | Whether the device resets the join and dev nonces (not LoRaWAN 1.1 compliant). Stored in Join Server. Copied on creation from template identified by version_ids, if any or from the home Network Server device profile, if any. |
+| `resets_join_nonces` | [`bool`](#bool) |  | Whether the device resets the join and dev nonces (not LoRaWAN compliant). Stored in Join Server. Copied on creation from template identified by version_ids, if any or from the home Network Server device profile, if any. |
 | `root_keys` | [`RootKeys`](#ttn.lorawan.v3.RootKeys) |  | Device root keys. Stored in Join Server. |
 | `net_id` | [`bytes`](#bytes) |  | Home NetID. Stored in Join Server. |
 | `mac_settings` | [`MACSettings`](#ttn.lorawan.v3.MACSettings) |  | Settings for how the Network Server handles MAC layer for this device. Stored in Network Server. |
@@ -2008,7 +2008,7 @@ Template for creating end devices.
 | `min_frequency` | [`uint64`](#uint64) |  | Minimum frequency the device is capable of using (Hz). |
 | `max_frequency` | [`uint64`](#uint64) |  | Maximum frequency the device is capable of using (Hz). |
 | `supports_join` | [`bool`](#bool) |  | The device supports join (it's OTAA). |
-| `resets_join_nonces` | [`bool`](#bool) |  | Whether the device resets the join and dev nonces (not LoRaWAN 1.1 compliant). |
+| `resets_join_nonces` | [`bool`](#bool) |  | Whether the device resets the join and dev nonces (not LoRaWAN compliant). |
 | `default_formatters` | [`MessagePayloadFormatters`](#ttn.lorawan.v3.MessagePayloadFormatters) |  | Default formatters defining the payload formats for this end device. |
 
 #### Field Rules
@@ -2104,13 +2104,14 @@ This is used internally by the Network Server.
 | `rejoin_time_periodicity` | [`RejoinTimeExponent`](#ttn.lorawan.v3.RejoinTimeExponent) |  | Time within which a rejoin-request must be sent. |
 | `rejoin_count_periodicity` | [`RejoinCountExponent`](#ttn.lorawan.v3.RejoinCountExponent) |  | Message count within which a rejoin-request must be sent. |
 | `ping_slot_frequency` | [`uint64`](#uint64) |  | Frequency of the class B ping slot (Hz). |
-| `ping_slot_data_rate_index` | [`DataRateIndex`](#ttn.lorawan.v3.DataRateIndex) |  | Data rate index of the class B ping slot. |
+| `ping_slot_data_rate_index` | [`DataRateIndex`](#ttn.lorawan.v3.DataRateIndex) |  | Data rate index of the class B ping slot. This field is deprecated, use ping_slot_data_rate_index_value instead. |
 | `beacon_frequency` | [`uint64`](#uint64) |  | Frequency of the class B beacon (Hz). |
 | `channels` | [`MACParameters.Channel`](#ttn.lorawan.v3.MACParameters.Channel) | repeated | Configured uplink channels and optionally Rx1 frequency. |
 | `uplink_dwell_time` | [`google.protobuf.BoolValue`](#google.protobuf.BoolValue) |  | Whether uplink dwell time is set (400ms). If this field is not set, then the value is either unknown or irrelevant(Network Server cannot modify it). |
 | `downlink_dwell_time` | [`google.protobuf.BoolValue`](#google.protobuf.BoolValue) |  | Whether downlink dwell time is set (400ms). If this field is not set, then the value is either unknown or irrelevant(Network Server cannot modify it). |
 | `adr_ack_limit_exponent` | [`ADRAckLimitExponentValue`](#ttn.lorawan.v3.ADRAckLimitExponentValue) |  | ADR: number of messages to wait before setting ADRAckReq. |
 | `adr_ack_delay_exponent` | [`ADRAckDelayExponentValue`](#ttn.lorawan.v3.ADRAckDelayExponentValue) |  | ADR: number of messages to wait after setting ADRAckReq and before changing TxPower or DataRate. |
+| `ping_slot_data_rate_index_value` | [`DataRateIndexValue`](#ttn.lorawan.v3.DataRateIndexValue) |  | Data rate index of the class B ping slot. |
 
 #### Field Rules
 
@@ -2127,7 +2128,6 @@ This is used internally by the Network Server.
 | `rejoin_time_periodicity` | <p>`enum.defined_only`: `true`</p> |
 | `rejoin_count_periodicity` | <p>`enum.defined_only`: `true`</p> |
 | `ping_slot_frequency` | <p>`uint64.lte`: `0`</p><p>`uint64.gte`: `100000`</p> |
-| `ping_slot_data_rate_index` | <p>`enum.defined_only`: `true`</p> |
 | `beacon_frequency` | <p>`uint64.lte`: `0`</p><p>`uint64.gte`: `100000`</p> |
 | `channels` | <p>`repeated.min_items`: `1`</p> |
 
@@ -2158,6 +2158,7 @@ This is used internally by the Network Server.
 | `ping_slot_periodicity` | [`PingSlotPeriodValue`](#ttn.lorawan.v3.PingSlotPeriodValue) |  | Periodicity of the class B ping slot. If unset, the default value from Network Server configuration will be used. |
 | `ping_slot_data_rate_index` | [`DataRateIndexValue`](#ttn.lorawan.v3.DataRateIndexValue) |  | Data rate index of the class B ping slot. If unset, the default value from Network Server configuration will be used. |
 | `ping_slot_frequency` | [`google.protobuf.UInt64Value`](#google.protobuf.UInt64Value) |  | Frequency of the class B ping slot (Hz). If unset, the default value from Network Server configuration will be used. |
+| `beacon_frequency` | [`google.protobuf.UInt64Value`](#google.protobuf.UInt64Value) |  | Frequency of the class B beacon (Hz). If unset, the default value from Network Server configuration will be used. |
 | `class_c_timeout` | [`google.protobuf.Duration`](#google.protobuf.Duration) |  | Maximum delay for the device to answer a MAC request or a confirmed downlink frame. If unset, the default value from Network Server configuration will be used. |
 | `rx1_delay` | [`RxDelayValue`](#ttn.lorawan.v3.RxDelayValue) |  | Class A Rx1 delay. If unset, the default value from Network Server configuration or regional parameters specification will be used. |
 | `rx1_data_rate_offset` | [`google.protobuf.UInt32Value`](#google.protobuf.UInt32Value) |  | Rx1 data rate offset. If unset, the default value from Network Server configuration will be used. |
@@ -2178,15 +2179,21 @@ This is used internally by the Network Server.
 | `desired_max_duty_cycle` | [`AggregatedDutyCycleValue`](#ttn.lorawan.v3.AggregatedDutyCycleValue) |  | The maximum uplink duty cycle (of all channels) Network Server should configure device to use via MAC commands. If unset, the default value from Network Server configuration will be used. |
 | `desired_adr_ack_limit_exponent` | [`ADRAckLimitExponentValue`](#ttn.lorawan.v3.ADRAckLimitExponentValue) |  | The ADR ACK limit Network Server should configure device to use via MAC commands. If unset, the default value from Network Server configuration or regional parameters specification will be used. |
 | `desired_adr_ack_delay_exponent` | [`ADRAckDelayExponentValue`](#ttn.lorawan.v3.ADRAckDelayExponentValue) |  | The ADR ACK delay Network Server should configure device to use via MAC commands. If unset, the default value from Network Server configuration or regional parameters specification will be used. |
+| `desired_ping_slot_data_rate_index` | [`DataRateIndexValue`](#ttn.lorawan.v3.DataRateIndexValue) |  | The data rate index of the class B ping slot Network Server should configure device to use via MAC commands. If unset, the default value from Network Server configuration will be used. |
+| `desired_ping_slot_frequency` | [`google.protobuf.UInt64Value`](#google.protobuf.UInt64Value) |  | The frequency of the class B ping slot (Hz) Network Server should configure device to use via MAC commands. If unset, the default value from Network Server configuration or regional parameters specification will be used. |
+| `desired_beacon_frequency` | [`google.protobuf.UInt64Value`](#google.protobuf.UInt64Value) |  | The frequency of the class B beacon (Hz) Network Server should configure device to use via MAC commands. If unset, the default value from Network Server configuration will be used. |
 
 #### Field Rules
 
 | Field | Validations |
 | ----- | ----------- |
 | `ping_slot_frequency` | <p>`uint64.gte`: `100000`</p> |
+| `beacon_frequency` | <p>`uint64.gte`: `100000`</p> |
 | `rx1_data_rate_offset` | <p>`uint32.lte`: `7`</p> |
 | `rx2_frequency` | <p>`uint64.gte`: `100000`</p> |
 | `desired_rx2_frequency` | <p>`uint64.gte`: `100000`</p> |
+| `desired_ping_slot_frequency` | <p>`uint64.gte`: `100000`</p> |
+| `desired_beacon_frequency` | <p>`uint64.gte`: `100000`</p> |
 
 ### <a name="ttn.lorawan.v3.MACState">Message `MACState`</a>
 
@@ -2202,7 +2209,7 @@ This is used internally by the Network Server and is read only.
 | `lorawan_version` | [`MACVersion`](#ttn.lorawan.v3.MACVersion) |  | LoRaWAN MAC version. |
 | `last_confirmed_downlink_at` | [`google.protobuf.Timestamp`](#google.protobuf.Timestamp) |  | Time when the last confirmed downlink message or MAC command was scheduled. |
 | `last_dev_status_f_cnt_up` | [`uint32`](#uint32) |  | Frame counter value of last uplink containing DevStatusAns. |
-| `ping_slot_periodicity` | [`PingSlotPeriod`](#ttn.lorawan.v3.PingSlotPeriod) |  | Periodicity of the class B ping slot. |
+| `ping_slot_periodicity` | [`PingSlotPeriodValue`](#ttn.lorawan.v3.PingSlotPeriodValue) |  | Periodicity of the class B ping slot. |
 | `pending_application_downlink` | [`ApplicationDownlink`](#ttn.lorawan.v3.ApplicationDownlink) |  | A confirmed application downlink, for which an acknowledgment is expected to arrive. |
 | `queued_responses` | [`MACCommand`](#ttn.lorawan.v3.MACCommand) | repeated | Queued MAC responses. Regenerated on each uplink. |
 | `pending_requests` | [`MACCommand`](#ttn.lorawan.v3.MACCommand) | repeated | Pending MAC requests(i.e. sent requests, for which no response has been received yet). Regenerated on each downlink. |
@@ -2220,7 +2227,6 @@ This is used internally by the Network Server and is read only.
 | `desired_parameters` | <p>`message.required`: `true`</p> |
 | `device_class` | <p>`enum.defined_only`: `true`</p> |
 | `lorawan_version` | <p>`enum.defined_only`: `true`</p> |
-| `ping_slot_periodicity` | <p>`enum.defined_only`: `true`</p> |
 
 ### <a name="ttn.lorawan.v3.MACState.JoinAccept">Message `MACState.JoinAccept`</a>
 
@@ -2493,6 +2499,7 @@ Gateway is the message that defines a gateway on the network.
 | `schedule_downlink_late` | [`bool`](#bool) |  | Enable server-side buffering of downlink messages. This is recommended for gateways using the Semtech UDP Packet Forwarder v2.x or older, as it does not feature a just-in-time queue. If enabled, the Gateway Server schedules the downlink message late to the gateway so that it does not overwrite previously scheduled downlink messages that have not been transmitted yet. |
 | `enforce_duty_cycle` | [`bool`](#bool) |  | Enforcing gateway duty cycle is recommended for all gateways to respect spectrum regulations. Disable enforcing the duty cycle only in controlled research and development environments. |
 | `downlink_path_constraint` | [`DownlinkPathConstraint`](#ttn.lorawan.v3.DownlinkPathConstraint) |  |  |
+| `schedule_anytime_delay` | [`google.protobuf.Duration`](#google.protobuf.Duration) |  | Adjust the time that GS schedules class C messages in advance. This is useful for gateways that have a known high latency backhaul, like 3G and satellite. |
 
 #### Field Rules
 
@@ -4792,7 +4799,6 @@ Uplink message from the end device to the network
 | Field | Validations |
 | ----- | ----------- |
 | `settings` | <p>`message.required`: `true`</p> |
-| `rx_metadata` | <p>`repeated.min_items`: `1`</p> |
 | `correlation_ids` | <p>`repeated.items.string.max_len`: `100`</p> |
 | `device_channel_index` | <p>`uint32.lte`: `255`</p> |
 

@@ -17,6 +17,13 @@ import { components } from '../constants/components'
 
 const PropTypes = { ...originalPropTypes }
 
+PropTypes.formatters = PropTypes.shape({
+  up_formatter: PropTypes.string,
+  up_formatter_parameter: PropTypes.string,
+  down_formatter: PropTypes.string,
+  down_formatter_parameter: PropTypes.string,
+})
+
 PropTypes.message = PropTypes.oneOfType([
   PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -195,6 +202,10 @@ PropTypes.location = PropTypes.shape({
   state: PropTypes.shape({
     info: PropTypes.message,
   }),
+})
+
+PropTypes.history = PropTypes.shape({
+  listen: PropTypes.func,
 })
 
 PropTypes.collaborator = PropTypes.shape({
