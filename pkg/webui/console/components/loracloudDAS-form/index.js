@@ -126,6 +126,7 @@ export default class LoracloudDASForm extends Component {
           placeholder="https://dms.loracloud.com"
           component={Input}
           required
+          disabled={update}
         />
         <Form.Field
           name="token"
@@ -142,6 +143,7 @@ export default class LoracloudDASForm extends Component {
           description={m.portDesc}
           component={Input}
           required
+          disabled={update}
         />
         <SubmitBar>
           <Form.Submit

@@ -114,6 +114,8 @@ export default class ApplicationLoracloudDASEdit extends Component {
       loracloudDAS: originalLoracloudDAS,
     } = this.props
     const patch = diff(originalLoracloudDAS, updatedLoracloudDAS, ['ids'])
+    const deviceId = updatedLoracloudDAS.device_id
+    const port = updatedLoracloudDAS.port
 
     // Ensure that the header prop is always patched fully, otherwise we loose
     // old header entries.
@@ -121,7 +123,7 @@ export default class ApplicationLoracloudDASEdit extends Component {
       patch.headers = updatedLoracloudDAS.headers
     }
 
-    await api.application.loracloudDASs.update(appId, loracloudDASId, patch)
+    await api.application.loracloudDASs.update(appId, deviceId, port, patch)
   }
 
   handleSubmitSuccess() {

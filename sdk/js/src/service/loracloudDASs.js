@@ -114,20 +114,24 @@ class LoracloudDASs {
 
   async updateById(
     appId,
-    loracloudDASId,
+    deviceId,
+    port,
     patch,
-    mask = Marshaler.fieldMaskFromPatch(patch, this._api.SetAllowedFieldMaskPaths),
   ) {
-    const result = await this._api.Set(
+    const result = await this._api.SetAssociation(
       {
         routeParams: {
-          'loracloudDAS.ids.application_ids.application_id': appId,
-          'loracloudDAS.ids.loracloudDAS_id': loracloudDASId,
+          'association.ids.end_device_ids.application_ids.application_id': appId,
+          'association.ids.end_device_ids.device_id': deviceId,
+          'association.ids.f_port': port,
         },
       },
       {
-        loracloudDAS: patch,
-        field_mask: Marshaler.fieldMask(mask),
+        association: {
+          package_name: 'lora-cloud-device-management-v1',
+          data: { token: patch.token }
+        },
+        field_mask: { paths: ['package_name', 'data'] },
       },
     )
 
