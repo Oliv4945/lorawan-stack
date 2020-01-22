@@ -188,6 +188,11 @@ export default class Application extends React.Component {
                 path={`${matchedUrl}/integrations/pubsubs`}
                 icon="extension"
               />
+              <SideNavigation.Item
+                title={sharedMessages.loracloudDASs}
+                path={`${matchedUrl}/integrations/loraclouddass`}
+                icon="extension"
+              />
             </SideNavigation.Item>
           )}
           {mayViewOrEditApplicationCollaborators.check(rights) && (
