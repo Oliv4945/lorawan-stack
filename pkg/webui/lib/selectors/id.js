@@ -104,7 +104,7 @@ export const getLoracloudDASId = function (loracloudDAS = {}) {
   console.log(["getLoracloudDASId", loracloudDAS])
   const loracloudDASId = `${getByPath(loracloudDAS, 'ids.end_device_ids.device_id')}#${getByPath(loracloudDAS, 'ids.f_port')}`
   console.log(["id", loracloudDASId])
-  return getByPath(loracloudDAS, 'ids.f_port')
+  return loracloudDASId
 }
 
 export const getUserId = function (user = {}) {

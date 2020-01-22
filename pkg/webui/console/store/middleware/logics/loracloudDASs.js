@@ -39,27 +39,18 @@ const getLoracloudDASsLogic = createRequestLogic({
   async process({ action }) {
     const { appId } = action.payload
 
+    // Get device list
     const devices = await api.devices.list(appId, [])
-    console.log(["getLoracloudDASsLogic - devices", devices.end_devices])
-    var res = {
-      associations: [],
-      totalCount: 0
-    }
 
-
-    devices.end_devices.forEach(device => {
+    // Associated application packages to each devices
+    var application_packages = await Promise.all(devices.end_devices.map(async (device) => {
       var device_id = device.ids["device_id"]
-      console.log(`Device_id: ${device_id}`)
-      api.application.loracloudDASs.list(appId, device_id, []).then(function (res_device) {
-        console.log(["res_device", res_device, device_id])
-        res.associations.push.apply(res.associations, res_device.associations)
-        res.totalCount += res_device.totalCount
-      })
-    });
+      var application_packages_device = await api.application.loracloudDASs.list(appId, device_id, [])
+      return await application_packages_device.associations
+    }));
+    var application_packages = application_packages.flat(1)
 
-    //const res = await api.application.loracloudDASs.list(appId, 'test-device', [])
-    console.log(["getLoracloudDASsLogic res", { entities: res.associations, totalCount: res.totalCount }])
-    return { entities: res.associations, totalCount: res.totalCount }
+    return { entities: application_packages, totalCount: application_packages.length }
   },
 })
 
