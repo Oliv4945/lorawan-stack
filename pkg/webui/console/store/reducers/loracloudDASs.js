@@ -37,10 +37,13 @@ const loracloudDASs = function (state = defaultState, { type, payload }) {
         },
       }
     case GET_LORACLOUDDASS_LIST_SUCCESS:
+      console.log([`reducer - type: ${type}`, payload, state])
+      console.log(["payload.entities", payload.entities])
       return {
         ...state,
         entities: {
           ...payload.entities.reduce((acc, loracloudDAS) => {
+            console.log(`reduced`, acc)
             acc[getLoracloudDASId(loracloudDAS)] = loracloudDAS
             return acc
           }, {}),

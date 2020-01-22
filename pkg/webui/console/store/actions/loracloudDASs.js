@@ -32,4 +32,4 @@ export const [
     failure: GET_LORACLOUDDASS_LIST_FAILURE,
   },
   { request: getLoracloudDASsList, success: getLoracloudDASsListSuccess, failure: getLoracloudDASsListFailure },
-] = createRequestActions(GET_LORACLOUDDASS_LIST_BASE, appId => ({ appId }))
+] = createRequestActions(GET_LORACLOUDDASS_LIST_BASE, (appId, deviceId) => ({ appId, deviceId }))

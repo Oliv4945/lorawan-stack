@@ -20,21 +20,19 @@ class LoracloudDASs {
     this._api = registry
   }
 
-  async getAll(appId) {
-    console.log("GetAll")
+  async getAll(appId, devId) {
     const result = await this._api.ListAssociations({
       routeParams: {
         'ids.application_ids.application_id': appId,
-        'ids.device_id': 'test-device'
+        'ids.device_id': devId
       },
     })
     // OGZ Workaround to have correct results in "entities"
-    console.log(result)
+    console.log(["getAll", result])
     if (!isNaN(result.headers['x-total-count'])) {
       delete result.headers['x-total-count']
     }
 
-    console.log(Marshaler.payloadListResponse('associations', result))
     return Marshaler.payloadListResponse('associations', result)
   }
 
@@ -63,7 +61,7 @@ class LoracloudDASs {
     },
       fieldMask
     )
-    console.log("list 2")
+    console.log(`list 2 - ${devId}`)
     console.log(Marshaler.payloadListResponse('associations', result))
     return Marshaler.payloadListResponse('associations', result)
   }

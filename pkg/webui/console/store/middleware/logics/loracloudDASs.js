@@ -28,38 +28,37 @@ const getLoracloudDASLogic = createRequestLogic({
   },
 })
 
+async function test(appId, deviceId) {
+  const resdev = await api.application.loracloudDASs.list(appId, deviceId, [])
+  console.log(["resdevtest", resdev, deviceId])
+  return resdev
+}
+
 const getLoracloudDASsLogic = createRequestLogic({
   type: loracloudDASs.GET_LORACLOUDDASS_LIST,
   async process({ action }) {
     const { appId } = action.payload
-    // OGZ test
-    console.log("GET_LORACLOUDDASS_LIST")
-    /*
-        const devices = await api.devices.list(appId, [])
-        console.log(devices)
-        var res = {
-          associations: [],
-          totalCount: 0
-        }
-        console.log("GET_LORACLOUDDASS_LIST 2")
-        devices.end_devices.forEach(device => {
-          console.log(device)
-          console.log(device.ids)
-          console.log(device.ids["device_id"])
-          var device_id = device.ids["device_id"]
-          console.log(`DEvice_id: ${device_id}`)
-          api.application.loracloudDASs.list(appId, device_id, []).then(function (res_device) {
-            console.log(["res_device", res])
-            res.associations.push.apply(res.associations, res_device.associations)
-            // OGZ Why + 1
-            res.totalCount += res_device.totalCount + 1
-          })
-        });
-    */
-    console.log("END GET_LORACLOUDDASS_LIST")
-    const res = await api.application.loracloudDASs.list(appId, 'test-device', [])
-    console.log(["res", res])
-    console.log("END GET_LORACLOUDDASS_LIST 2")
+
+    const devices = await api.devices.list(appId, [])
+    console.log(["getLoracloudDASsLogic - devices", devices.end_devices])
+    var res = {
+      associations: [],
+      totalCount: 0
+    }
+
+
+    devices.end_devices.forEach(device => {
+      var device_id = device.ids["device_id"]
+      console.log(`Device_id: ${device_id}`)
+      api.application.loracloudDASs.list(appId, device_id, []).then(function (res_device) {
+        console.log(["res_device", res_device, device_id])
+        res.associations.push.apply(res.associations, res_device.associations)
+        res.totalCount += res_device.totalCount
+      })
+    });
+
+    //const res = await api.application.loracloudDASs.list(appId, 'test-device', [])
+    console.log(["getLoracloudDASsLogic res", { entities: res.associations, totalCount: res.totalCount }])
     return { entities: res.associations, totalCount: res.totalCount }
   },
 })
