@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [3.5.0] (2020-01-24)
+
+### Added
+
 - Support for releasing gateway EUI after deletion.
 - Support in the Application Server for the `X-Downlink-Apikey`, `X-Downlink-Push` and `X-Downlink-Replace` webhook headers. They allow webhook integrations to determine which endpoints to use for downlink queue operations.
 - `as.webhooks.downlinks.public-address` and `as.webhooks.downlinks.public-tls-address` configuration options to the Application Server.
@@ -21,15 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `mac_settings.desired_ping_slot_frequency` end device field, which defines the desired frequency of the class B ping slot that will be configured via MAC commands.
 - Mobile navigation menu to the Console.
 - View and edit all Gateway settings from the Console.
+- `skip_payload_crypto` end device field, which makes the Application Server skip decryption of uplink payloads and encryption of downlink payloads.
+- `app_s_key` and `last_a_f_cnt_down` uplink message fields, which are set if the `skip_payload_crypto` end device field is true.
+- Support multiple frequency plans for a Gateway.
 
 ### Changed
 
 - `resets_join_nonces` now applies to pre-1.1 devices as well as 1.1+ devices.
 - Empty (`0x0000000000000000`) JoinEUIs are now allowed.
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 
@@ -39,8 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - RxMetadata Location field from Gateway Server.
 - Channel mask encoding in LinkADR MAC command.
 - Device location and payload formatter form submits in the Console.
-
-### Security
+- Events processing in the JS SDK.
+- Application Server frontends getting stuck after their associated link is closed.
 
 ## [3.4.2] (2020-01-08)
 
@@ -552,7 +565,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 NOTE: These links should respect backports. See https://github.com/TheThingsNetwork/lorawan-stack/pull/1444/files#r333379706.
 -->
 
-[unreleased]: https://github.com/TheThingsNetwork/lorawan-stack/compare/v3.4.2...HEAD
+[unreleased]: https://github.com/TheThingsNetwork/lorawan-stack/compare/v3.5.0...HEAD
+[3.5.0]: https://github.com/TheThingsNetwork/lorawan-stack/compare/v3.4.2...v3.5.0
 [3.4.2]: https://github.com/TheThingsNetwork/lorawan-stack/compare/v3.4.1...v3.4.2
 [3.4.1]: https://github.com/TheThingsNetwork/lorawan-stack/compare/v3.4.0...v3.4.1
 [3.4.0]: https://github.com/TheThingsNetwork/lorawan-stack/compare/v3.3.2...v3.4.0
