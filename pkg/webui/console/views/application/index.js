@@ -23,7 +23,7 @@ import Breadcrumb from '../../../components/breadcrumbs/breadcrumb'
 import IntlHelmet from '../../../lib/components/intl-helmet'
 import withRequest from '../../../lib/components/with-request'
 import { withEnv } from '../../../lib/components/env'
-import BreadcrumbView from '../../../lib/components/breadcrumb-view'
+import Breadcrumbs from '../../../components/breadcrumbs'
 import NotFoundRoute from '../../../lib/components/not-found-route'
 
 import ApplicationOverview from '../application-overview'
@@ -92,7 +92,7 @@ import PropTypes from '../../../lib/prop-types'
     appId,
     application: { name },
   } = props
-  return <Breadcrumb path={`/applications/${appId}`} icon="application" content={name || appId} />
+  return <Breadcrumb path={`/applications/${appId}`} content={name || appId} />
 })
 @withEnv
 export default class Application extends React.Component {
@@ -125,7 +125,8 @@ export default class Application extends React.Component {
     } = this.props
 
     return (
-      <BreadcrumbView>
+      <React.Fragment>
+        <Breadcrumbs />
         <IntlHelmet titleTemplate={`%s - ${application.name || appId} - ${env.siteName}`} />
         <SideNavigation header={{ icon: 'application', title: application.name || appId }}>
           {mayViewApplicationInfo.check(rights) && (
@@ -239,7 +240,7 @@ export default class Application extends React.Component {
 
           <NotFoundRoute />
         </Switch>
-      </BreadcrumbView>
+      </React.Fragment>
     )
   }
 }

@@ -20,10 +20,10 @@ import IntlHelmet from '../../../lib/components/intl-helmet'
 import sharedMessages from '../../../lib/shared-messages'
 import { withBreadcrumb } from '../../../components/breadcrumbs/context'
 import Breadcrumb from '../../../components/breadcrumbs/breadcrumb'
+import Breadcrumbs from '../../../components/breadcrumbs'
 import SideNavigation from '../../../components/navigation/side'
 import withRequest from '../../../lib/components/with-request'
 import withEnv from '../../../lib/components/env'
-import BreadcrumbView from '../../../lib/components/breadcrumb-view'
 import NotFoundRoute from '../../../lib/components/not-found-route'
 
 import GatewayOverview from '../gateway-overview'
@@ -100,7 +100,7 @@ import PropTypes from '../../../lib/prop-types'
     gateway: { name },
   } = props
 
-  return <Breadcrumb path={`/gateways/${gtwId}`} icon="gateway" content={name || gtwId} />
+  return <Breadcrumb path={`/gateways/${gtwId}`} content={name || gtwId} />
 })
 @withEnv
 export default class Gateway extends React.Component {
@@ -127,7 +127,8 @@ export default class Gateway extends React.Component {
     } = this.props
 
     return (
-      <BreadcrumbView>
+      <React.Fragment>
+        <Breadcrumbs />
         <IntlHelmet titleTemplate={`%s - ${gateway.name || gtwId} - ${env.siteName}`} />
         <SideNavigation header={{ icon: 'gateway', title: gateway.name || gtwId }}>
           {mayViewGatewayInfo.check(rights) && (
@@ -135,6 +136,7 @@ export default class Gateway extends React.Component {
               title={sharedMessages.overview}
               path={matchedUrl}
               icon="overview"
+              exact
             />
           )}
           {mayViewGatewayEvents.check(rights) && (
@@ -182,7 +184,7 @@ export default class Gateway extends React.Component {
           <Route path={`${match.path}/general-settings`} component={GatewayGeneralSettings} />
           <NotFoundRoute />
         </Switch>
-      </BreadcrumbView>
+      </React.Fragment>
     )
   }
 }

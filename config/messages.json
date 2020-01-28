@@ -1709,9 +1709,45 @@
       "file": "tls.go"
     }
   },
+  "error:pkg/applicationserver/io/pubsub/provider/mqtt:connect_failed": {
+    "translations": {
+      "en": "connection to MQTT server failed"
+    },
+    "description": {
+      "package": "pkg/applicationserver/io/pubsub/provider/mqtt",
+      "file": "provider.go"
+    }
+  },
   "error:pkg/applicationserver/io/pubsub/provider/mqtt:nil_client": {
     "translations": {
       "en": "client is nil"
+    },
+    "description": {
+      "package": "pkg/applicationserver/io/pubsub/provider/mqtt",
+      "file": "driver.go"
+    }
+  },
+  "error:pkg/applicationserver/io/pubsub/provider/mqtt:publish_failed": {
+    "translations": {
+      "en": "publish to MQTT topic failed"
+    },
+    "description": {
+      "package": "pkg/applicationserver/io/pubsub/provider/mqtt",
+      "file": "driver.go"
+    }
+  },
+  "error:pkg/applicationserver/io/pubsub/provider/mqtt:subscribe_failed": {
+    "translations": {
+      "en": "subscribe to MQTT topic failed"
+    },
+    "description": {
+      "package": "pkg/applicationserver/io/pubsub/provider/mqtt",
+      "file": "driver.go"
+    }
+  },
+  "error:pkg/applicationserver/io/pubsub/provider/mqtt:unsubscribe_failed": {
+    "translations": {
+      "en": "unsubscribe from MQTT topic failed"
     },
     "description": {
       "package": "pkg/applicationserver/io/pubsub/provider/mqtt",
@@ -2024,15 +2060,6 @@
       "file": "linking.go"
     }
   },
-  "error:pkg/applicationserver:link_deleted": {
-    "translations": {
-      "en": "link deleted"
-    },
-    "description": {
-      "package": "pkg/applicationserver",
-      "file": "grpc.go"
-    }
-  },
   "error:pkg/applicationserver:link_mode": {
     "translations": {
       "en": "invalid link mode `{value}`"
@@ -2040,15 +2067,6 @@
     "description": {
       "package": "pkg/applicationserver",
       "file": "config.go"
-    }
-  },
-  "error:pkg/applicationserver:link_reset": {
-    "translations": {
-      "en": "link reset"
-    },
-    "description": {
-      "package": "pkg/applicationserver",
-      "file": "grpc.go"
     }
   },
   "error:pkg/applicationserver:listen_frontend": {
@@ -3446,6 +3464,24 @@
       "file": "io.go"
     }
   },
+  "error:pkg/gatewayserver/io:frequency_plans_not_from_same_band": {
+    "translations": {
+      "en": "frequency plans must be from the same band"
+    },
+    "description": {
+      "package": "pkg/gatewayserver/io",
+      "file": "io.go"
+    }
+  },
+  "error:pkg/gatewayserver/io:inconsistent_frequency_plans": {
+    "translations": {
+      "en": "inconsistent frequency plans configuration"
+    },
+    "description": {
+      "package": "pkg/gatewayserver/io",
+      "file": "io.go"
+    }
+  },
   "error:pkg/gatewayserver/io:no_absolute_time": {
     "translations": {
       "en": "no absolute time provided for class B downlink"
@@ -3637,7 +3673,7 @@
   },
   "error:pkg/gatewayserver/upstream/ns:network_server_not_found": {
     "translations": {
-      "en": "network server not found for ids `ids`"
+      "en": "Network Server not found"
     },
     "description": {
       "package": "pkg/gatewayserver/upstream/ns",
@@ -3647,15 +3683,6 @@
   "error:pkg/gatewayserver:empty_identifiers": {
     "translations": {
       "en": "empty identifiers"
-    },
-    "description": {
-      "package": "pkg/gatewayserver",
-      "file": "gatewayserver.go"
-    }
-  },
-  "error:pkg/gatewayserver:frequency_plans_not_from_same_band": {
-    "translations": {
-      "en": "frequency plans must be from the same band"
     },
     "description": {
       "package": "pkg/gatewayserver",
@@ -3772,7 +3799,7 @@
   },
   "error:pkg/gatewayserver:upstream": {
     "translations": {
-      "en": "failed to setup upstream `{hostname}`"
+      "en": "failed to setup upstream `{name}`"
     },
     "description": {
       "package": "pkg/gatewayserver",
@@ -4362,6 +4389,15 @@
     "description": {
       "package": "pkg/interop",
       "file": "errors.go"
+    }
+  },
+  "error:pkg/interop:generate_session_key_id": {
+    "translations": {
+      "en": "failed to generate session key ID"
+    },
+    "description": {
+      "package": "pkg/interop",
+      "file": "client.go"
     }
   },
   "error:pkg/interop:invalid_length": {
@@ -6131,6 +6167,15 @@
   "error:pkg/types:net_id_bits": {
     "translations": {
       "en": "too many bits set in NetID"
+    },
+    "description": {
+      "package": "pkg/types",
+      "file": "netid.go"
+    }
+  },
+  "error:pkg/types:net_id_overflow": {
+    "translations": {
+      "en": "NetID overflow"
     },
     "description": {
       "package": "pkg/types",

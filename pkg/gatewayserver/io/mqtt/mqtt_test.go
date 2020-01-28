@@ -28,6 +28,7 @@ import (
 	componenttest "go.thethings.network/lorawan-stack/pkg/component/test"
 	"go.thethings.network/lorawan-stack/pkg/config"
 	"go.thethings.network/lorawan-stack/pkg/errors"
+	"go.thethings.network/lorawan-stack/pkg/frequencyplans"
 	"go.thethings.network/lorawan-stack/pkg/gatewayserver/io"
 	"go.thethings.network/lorawan-stack/pkg/gatewayserver/io/mock"
 	. "go.thethings.network/lorawan-stack/pkg/gatewayserver/io/mqtt"
@@ -67,6 +68,7 @@ func TestAuthentication(t *testing.T) {
 			},
 		},
 	})
+	c.FrequencyPlans = frequencyplans.NewStore(test.FrequencyPlansFetcher)
 	componenttest.StartComponent(t, c)
 	defer c.Close()
 	mustHavePeer(ctx, c, ttnpb.ClusterRole_ENTITY_REGISTRY)
@@ -76,7 +78,7 @@ func TestAuthentication(t *testing.T) {
 	if !a.So(err, should.BeNil) {
 		t.FailNow()
 	}
-	Start(ctx, gs, lis, Protobuf, "tcp")
+	go Serve(ctx, gs, lis, Protobuf, "tcp")
 
 	for _, tc := range []struct {
 		UID string
@@ -108,13 +110,17 @@ func TestAuthentication(t *testing.T) {
 			clientOpts.SetPassword(tc.Key)
 			client := mqtt.NewClient(clientOpts)
 			token := client.Connect()
-			if ok := token.WaitTimeout(timeout); tc.OK {
-				if a.So(ok, should.BeTrue) && a.So(token.Error(), should.BeNil) {
-					client.Disconnect(uint(timeout / time.Millisecond))
+			if tc.OK {
+				if !token.WaitTimeout(timeout) {
+					t.Fatal("Connection timeout")
 				}
-			} else {
-				a.So(ok, should.BeFalse)
+				if !a.So(token.Error(), should.BeNil) {
+					t.FailNow()
+				}
+			} else if token.Wait() && !a.So(token.Error(), should.NotBeNil) {
+				t.FailNow()
 			}
+			client.Disconnect(uint(timeout / time.Millisecond))
 		})
 	}
 }
@@ -140,6 +146,7 @@ func TestTraffic(t *testing.T) {
 			},
 		},
 	})
+	c.FrequencyPlans = frequencyplans.NewStore(test.FrequencyPlansFetcher)
 	componenttest.StartComponent(t, c)
 	defer c.Close()
 	mustHavePeer(ctx, c, ttnpb.ClusterRole_ENTITY_REGISTRY)
@@ -149,16 +156,18 @@ func TestTraffic(t *testing.T) {
 	if !a.So(err, should.BeNil) {
 		t.FailNow()
 	}
-	Start(ctx, gs, lis, Protobuf, "tcp")
+	go Serve(ctx, gs, lis, Protobuf, "tcp")
 
 	clientOpts := mqtt.NewClientOptions()
 	clientOpts.AddBroker(fmt.Sprintf("tcp://%v", lis.Addr()))
 	clientOpts.SetUsername(registeredGatewayUID)
 	clientOpts.SetPassword(registeredGatewayKey)
 	client := mqtt.NewClient(clientOpts)
-	if token := client.Connect(); !a.So(token.WaitTimeout(timeout), should.BeTrue) {
-		t.FailNow()
-	} else if !a.So(token.Error(), should.BeNil) {
+	token := client.Connect()
+	if !token.WaitTimeout(timeout) {
+		t.Fatal("Connection timeout")
+	}
+	if !a.So(token.Error(), should.BeNil) {
 		t.FailNow()
 	}
 
@@ -237,7 +246,11 @@ func TestTraffic(t *testing.T) {
 				a := assertions.New(t)
 				buf, err := tc.Message.Marshal()
 				a.So(err, should.BeNil)
-				if token := client.Publish(tc.Topic, 1, false, buf); !a.So(token.WaitTimeout(timeout), should.BeTrue) {
+				token := client.Publish(tc.Topic, 1, false, buf)
+				if !token.WaitTimeout(timeout) {
+					t.Fatal("Publish timeout")
+				}
+				if !a.So(token.Error(), should.BeNil) {
 					t.FailNow()
 				}
 				select {
@@ -245,7 +258,7 @@ func TestTraffic(t *testing.T) {
 					if tc.OK {
 						a.So(time.Since(up.ReceivedAt), should.BeLessThan, timeout)
 						up.ReceivedAt = time.Time{}
-						a.So(up, should.Resemble, tc.Message)
+						a.So(up.UplinkMessage, should.Resemble, tc.Message)
 					} else {
 						t.Fatalf("Did not expect uplink message, but have %v", up)
 					}
@@ -352,7 +365,11 @@ func TestTraffic(t *testing.T) {
 					a.So(err, should.BeNil)
 					downCh <- down.DownlinkMessage
 				}
-				if token := client.Subscribe(tc.Topic, 1, handler); !a.So(token.WaitTimeout(timeout), should.BeTrue) {
+				token := client.Subscribe(tc.Topic, 1, handler)
+				if !token.WaitTimeout(timeout) {
+					t.Fatal("Subscribe timeout")
+				}
+				if !a.So(token.Error(), should.BeNil) {
 					t.FailNow()
 				}
 

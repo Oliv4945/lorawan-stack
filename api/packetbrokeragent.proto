@@ -1,4 +1,4 @@
-// Copyright © 2019 The Things Network Foundation, The Things Industries B.V.
+// Copyright © 2020 The Things Network Foundation, The Things Industries B.V.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.container
-  display: flex
-  flex-direction: column
-  height: 100%
+syntax = "proto3";
 
-.breadcrumbs-container
-  border-normal('bottom')
-  box-sizing: border-box
-  height: 3rem
+import "google/protobuf/empty.proto";
+import "lorawan-stack/api/messages.proto";
 
-.content-container
-  flex-grow: 1
-  position: relative
-  overflow-y: scroll
-  padding-bottom: $ls.xxs
+package ttn.lorawan.v3;
+
+option go_package = "go.thethings.network/lorawan-stack/pkg/ttnpb";
+
+// The GsPba service connects a Gateway Server to a Packet Broker Agent.
+service GsPba {
+  rpc PublishUplink(GatewayUplinkMessage) returns (google.protobuf.Empty);
+}

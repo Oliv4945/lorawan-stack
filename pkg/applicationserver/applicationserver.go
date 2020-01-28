@@ -177,21 +177,27 @@ func New(c *component.Component, conf *Config) (as *ApplicationServer, err error
 			component.NewTCPEndpoint(version.Config.Listen, "MQTT"),
 			component.NewTLSEndpoint(version.Config.ListenTLS, "MQTT"),
 		} {
+			version := version
+			endpoint := endpoint
 			if endpoint.Address() == "" {
 				continue
 			}
-			l, err := as.ListenTCP(endpoint.Address())
-			var lis net.Listener
-			if err == nil {
-				lis, err = endpoint.Listen(l)
-			}
-			if err != nil {
-				return nil, errListenFrontend.WithCause(err).WithAttributes(
-					"address", endpoint.Address(),
-					"protocol", endpoint.Protocol(),
-				)
-			}
-			mqtt.Start(ctx, retryIO, lis, version.Format, endpoint.Protocol())
+			as.RegisterTask(as.Context(), fmt.Sprintf("serve_mqtt/%s", endpoint.Address()),
+				func(ctx context.Context) error {
+					l, err := as.ListenTCP(endpoint.Address())
+					var lis net.Listener
+					if err == nil {
+						lis, err = endpoint.Listen(l)
+					}
+					if err != nil {
+						return errListenFrontend.WithCause(err).WithAttributes(
+							"address", endpoint.Address(),
+							"protocol", endpoint.Protocol(),
+						)
+					}
+					defer lis.Close()
+					return mqtt.Serve(ctx, retryIO, lis, version.Format, endpoint.Protocol())
+				}, component.TaskRestartOnFailure)
 		}
 	}
 
@@ -278,7 +284,10 @@ func (as *ApplicationServer) Subscribe(ctx context.Context, protocol string, ids
 	go func() {
 		select {
 		case <-l.ctx.Done():
+			// Disconnect the subscription in order to avoid leaking it,
+			// and skip the unsubscribe channel since it will get closed.
 			sub.Disconnect(l.ctx.Err())
+			return
 		case <-sub.Context().Done():
 		}
 		l.unsubscribeCh <- sub
@@ -480,7 +489,7 @@ func (as *ApplicationServer) fetchAppSKey(ctx context.Context, ids ttnpb.EndDevi
 			return ttnpb.KeyEnvelope{}, err
 		}
 	}
-	if as.interopClient != nil {
+	if as.interopClient != nil && !interop.GeneratedSessionKeyID(sessionKeyID) {
 		res, err := as.interopClient.GetAppSKey(ctx, as.interopID, req)
 		if err == nil {
 			return res.AppSKey, nil

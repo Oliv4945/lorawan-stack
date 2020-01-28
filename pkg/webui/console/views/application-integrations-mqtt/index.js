@@ -57,11 +57,7 @@ const m = defineMessages({
   const { appId } = props
 
   return (
-    <Breadcrumb
-      path={`/applications/${appId}/integrations/mqtt`}
-      icon="extension"
-      content={sharedMessages.mqtt}
-    />
+    <Breadcrumb path={`/applications/${appId}/integrations/mqtt`} content={sharedMessages.mqtt} />
   )
 })
 export default class ApplicationMqtt extends React.Component {
@@ -150,7 +146,11 @@ export default class ApplicationMqtt extends React.Component {
         key: sharedMessages.password,
         value: (
           <React.Fragment>
-            <Button message={m.generateApiKey} onClick={this.handleGeneratePasswordClick} />
+            <Button
+              className={style.generateApiKeyButton}
+              message={m.generateApiKey}
+              onClick={this.handleGeneratePasswordClick}
+            />
             <Button.Link to={`/applications/${appId}/api-keys`} message={m.viewApiKeys} secondary />
           </React.Fragment>
         ),

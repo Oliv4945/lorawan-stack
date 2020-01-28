@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Responsive side navigation (inside entity views) to the Console.
+- Overall responsiveness of the Console.
+
 ### Changed
 
 ### Deprecated
@@ -16,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- Crashes on Gateway Server start when traffic flow started while The Things Stack was still starting.
+- Not detecting session change in Application Server when interop Join Server did not provide a `SessionKeyID`.
 
 ### Security
 
@@ -38,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `skip_payload_crypto` end device field, which makes the Application Server skip decryption of uplink payloads and encryption of downlink payloads.
 - `app_s_key` and `last_a_f_cnt_down` uplink message fields, which are set if the `skip_payload_crypto` end device field is true.
 - Support multiple frequency plans for a Gateway.
+- Entity search by ID in the Console.
 
 ### Changed
 

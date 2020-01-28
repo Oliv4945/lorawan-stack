@@ -69,15 +69,14 @@ const getApplicationsLogic = createRequestLogic({
 
     const data = query
       ? await api.applications.search(
-        {
-          page,
-          limit,
-          id_contains: query,
-          name_contains: query,
-          order,
-        },
-        selectors,
-      )
+          {
+            page,
+            limit,
+            id_contains: query,
+            order,
+          },
+          selectors,
+        )
       : await api.applications.list({ page, limit, order }, selectors)
 
     return { entities: data.applications, totalCount: data.totalCount }

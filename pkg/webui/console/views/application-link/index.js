@@ -108,13 +108,7 @@ const validationSchema = Yup.object().shape({
   () => false,
 )
 @withBreadcrumb('apps.single.link', function(props) {
-  return (
-    <Breadcrumb
-      path={`/applications/${props.appId}/link`}
-      icon="link"
-      content={sharedMessages.link}
-    />
-  )
+  return <Breadcrumb path={`/applications/${props.appId}/link`} content={sharedMessages.link} />
 })
 class ApplicationLink extends React.Component {
   static propTypes = {
@@ -280,7 +274,7 @@ class ApplicationLink extends React.Component {
     return (
       <Container className={style.main}>
         <PageTitle title={sharedMessages.link} values={{ appId }} />
-        <Row>
+        <Row className={style.linkContainer}>
           <Col lg={6} md={12}>
             <Message component="h3" content={m.linkSettings} />
             <Form

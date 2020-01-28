@@ -103,7 +103,7 @@ var (
 		"failed to start frontend listener `{protocol}` on address `{address}`",
 	)
 	errNotConnected        = errors.DefineNotFound("not_connected", "gateway `{gateway_uid}` not connected")
-	errSetupUpstream       = errors.DefineFailedPrecondition("upstream", "failed to setup upstream `{hostname}`")
+	errSetupUpstream       = errors.DefineFailedPrecondition("upstream", "failed to setup upstream `{name}`")
 	errUpstreamType        = errors.DefineUnimplemented("upstream_type_not_implemented", "upstream `{name}` not implemented")
 	errInvalidUpstreamName = errors.DefineInvalidArgument("invalid_upstream_name", "upstream `{name}` is invalid")
 )
@@ -130,29 +130,53 @@ func New(c *component.Component, conf *Config, opts ...Option) (gs *GatewayServe
 		opt(gs)
 	}
 
-	ctx, cancel := context.WithCancel(gs.Context())
-	defer func() {
-		if err != nil {
-			cancel()
+	// Setup forwarding table.
+	for name, prefix := range gs.forward {
+		if name == "" {
+			name = "cluster"
 		}
-	}()
-
-	for addr, fallbackFrequencyPlanID := range conf.UDP.Listeners {
-		var conn *net.UDPConn
-		conn, err = gs.ListenUDP(addr)
-		if err != nil {
-			return nil, errListenFrontend.WithCause(err).WithAttributes(
-				"protocol", "udp",
-				"address", addr,
-			)
+		var handler upstream.Handler
+		switch name {
+		case "cluster":
+			handler = ns.NewHandler(gs.Context(), c, prefix)
+		default:
+			return nil, errInvalidUpstreamName.WithAttributes("name", name)
 		}
-		lisCtx := ctx
-		if fallbackFrequencyPlanID != "" {
-			lisCtx = frequencyplans.WithFallbackID(ctx, fallbackFrequencyPlanID)
+		if err := handler.Setup(gs.Context()); err != nil {
+			return nil, errSetupUpstream.WithCause(err).WithAttributes("name", name)
 		}
-		udp.Start(lisCtx, gs, conn, conf.UDP.Config)
+		gs.upstreamHandlers[name] = handler
 	}
 
+	// Register gRPC services.
+	hooks.RegisterUnaryHook("/ttn.lorawan.v3.NsGs", rpclog.NamespaceHook, rpclog.UnaryNamespaceHook("gatewayserver"))
+	hooks.RegisterUnaryHook("/ttn.lorawan.v3.NsGs", cluster.HookName, c.ClusterAuthUnaryHook())
+	c.RegisterGRPC(gs)
+
+	// Start UDP listeners.
+	for addr, fallbackFrequencyPlanID := range conf.UDP.Listeners {
+		addr := addr
+		fallbackFrequencyPlanID := fallbackFrequencyPlanID
+		gs.RegisterTask(gs.Context(), fmt.Sprintf("serve_udp/%s", addr),
+			func(ctx context.Context) error {
+				var conn *net.UDPConn
+				conn, err = gs.ListenUDP(addr)
+				if err != nil {
+					return errListenFrontend.WithCause(err).WithAttributes(
+						"protocol", "udp",
+						"address", addr,
+					)
+				}
+				defer conn.Close()
+				lisCtx := ctx
+				if fallbackFrequencyPlanID != "" {
+					lisCtx = frequencyplans.WithFallbackID(ctx, fallbackFrequencyPlanID)
+				}
+				return udp.Serve(lisCtx, gs, conn, conf.UDP.Config)
+			}, component.TaskRestartOnFailure)
+	}
+
+	// Start MQTT listeners.
 	for _, version := range []struct {
 		Format mqtt.Format
 		Config config.MQTT
@@ -170,82 +194,64 @@ func New(c *component.Component, conf *Config, opts ...Option) (gs *GatewayServe
 			component.NewTCPEndpoint(version.Config.Listen, "MQTT"),
 			component.NewTLSEndpoint(version.Config.ListenTLS, "MQTT"),
 		} {
+			version := version
+			endpoint := endpoint
 			if endpoint.Address() == "" {
 				continue
 			}
-			l, err := gs.ListenTCP(endpoint.Address())
-			var lis net.Listener
-			if err == nil {
-				lis, err = endpoint.Listen(l)
-			}
-			if err != nil {
-				return nil, errListenFrontend.WithCause(err).WithAttributes(
-					"address", endpoint.Address(),
-					"protocol", endpoint.Protocol(),
-				)
-			}
-			mqtt.Start(ctx, gs, lis, version.Format, endpoint.Protocol())
+			gs.RegisterTask(gs.Context(), fmt.Sprintf("serve_mqtt/%s", endpoint.Address()),
+				func(ctx context.Context) error {
+					l, err := gs.ListenTCP(endpoint.Address())
+					var lis net.Listener
+					if err == nil {
+						lis, err = endpoint.Listen(l)
+					}
+					if err != nil {
+						return errListenFrontend.WithCause(err).WithAttributes(
+							"address", endpoint.Address(),
+							"protocol", endpoint.Protocol(),
+						)
+					}
+					defer lis.Close()
+					return mqtt.Serve(ctx, gs, lis, version.Format, endpoint.Protocol())
+				}, component.TaskRestartOnFailure)
 		}
 	}
 
-	hooks.RegisterUnaryHook("/ttn.lorawan.v3.NsGs", rpclog.NamespaceHook, rpclog.UnaryNamespaceHook("gatewayserver"))
-	bsCtx := ctx
+	// Start Basic Station listeners.
+	bsCtx := gs.Context()
 	if conf.BasicStation.FallbackFrequencyPlanID != "" {
-		bsCtx = frequencyplans.WithFallbackID(ctx, conf.BasicStation.FallbackFrequencyPlanID)
+		bsCtx = frequencyplans.WithFallbackID(bsCtx, conf.BasicStation.FallbackFrequencyPlanID)
 	}
-
 	bsWebServer := basicstationlns.New(bsCtx, gs, conf.BasicStation.UseTrafficTLSAddress)
 	for _, endpoint := range []component.Endpoint{
 		component.NewTCPEndpoint(conf.BasicStation.Listen, "Basic Station"),
 		component.NewTLSEndpoint(conf.BasicStation.ListenTLS, "Basic Station", component.WithNextProtos("h2", "http/1.1")),
 	} {
+		endpoint := endpoint
 		if endpoint.Address() == "" {
 			continue
 		}
-		l, err := gs.ListenTCP(endpoint.Address())
-		var lis net.Listener
-		if err == nil {
-			lis, err = endpoint.Listen(l)
-		}
-		if err != nil {
-			return nil, errListenFrontend.WithCause(err).WithAttributes(
-				"address", endpoint.Address(),
-				"protocol", endpoint.Protocol(),
-			)
-		}
-		go func() error {
-			return http.Serve(lis, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				bsWebServer.ServeHTTP(w, r)
-			}))
-		}()
+		gs.RegisterTask(gs.Context(), fmt.Sprintf("serve_basicstation/%s", endpoint.Address()),
+			func(ctx context.Context) error {
+				l, err := gs.ListenTCP(endpoint.Address())
+				var lis net.Listener
+				if err == nil {
+					lis, err = endpoint.Listen(l)
+				}
+				if err != nil {
+					return errListenFrontend.WithCause(err).WithAttributes(
+						"address", endpoint.Address(),
+						"protocol", endpoint.Protocol(),
+					)
+				}
+				defer lis.Close()
+				return http.Serve(lis, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					bsWebServer.ServeHTTP(w, r)
+				}))
+			}, component.TaskRestartOnFailure)
 	}
 
-	hooks.RegisterUnaryHook("/ttn.lorawan.v3.NsGs", cluster.HookName, c.ClusterAuthUnaryHook())
-
-	for name, prefix := range gs.forward {
-		if name == "" {
-			gs.upstreamHandlers["cluster"] = ns.NewHandler(ctx, "cluster", c, prefix)
-		} else {
-			str := strings.SplitN(name, ":", 2)
-			if len(str) != 2 {
-				return nil, errInvalidUpstreamName.WithAttributes("name", name)
-			}
-			switch str[0] {
-			case "ttn.lorawan.v3.GsNs":
-				gs.upstreamHandlers[str[1]] = ns.NewHandler(ctx, str[1], c, prefix)
-			default:
-				return nil, errUpstreamType.WithAttributes("name", name)
-			}
-		}
-	}
-
-	for _, handler := range gs.upstreamHandlers {
-		if err := handler.Setup(); err != nil {
-			return nil, errSetupUpstream.WithCause(err).WithAttributes("hostname", handler.GetHostName())
-		}
-	}
-
-	c.RegisterGRPC(gs)
 	return gs, nil
 }
 
@@ -330,10 +336,6 @@ var (
 		"no_fallback_frequency_plan",
 		"gateway `{gateway_uid}` is not registered and no fallback frequency plan defined",
 	)
-	errFrequencyPlansNotFromSameBand = errors.DefineInvalidArgument(
-		"frequency_plans_not_from_same_band",
-		"frequency plans must be from the same band",
-	)
 )
 
 // Connect connects a gateway by its identifiers to the Gateway Server, and returns a io.Connection for traffic and
@@ -370,9 +372,9 @@ func (gs *GatewayServer) Connect(ctx context.Context, frontend io.Frontend, ids 
 				"downlink_path_constraint",
 				"enforce_duty_cycle",
 				"frequency_plan_id",
+				"frequency_plan_ids",
 				"location_public",
 				"schedule_anytime_delay",
-				"frequency_plan_ids",
 				"schedule_downlink_late",
 			},
 		},
@@ -399,32 +401,7 @@ func (gs *GatewayServer) Connect(ctx context.Context, frontend io.Frontend, ids 
 		return nil, err
 	}
 
-	var bandID string
-
-	// Get all frequency plans and check if they are from the same band.
-	fps := make(map[string]*frequencyplans.FrequencyPlan, len(gtw.FrequencyPlanIDs))
-	if len(gtw.FrequencyPlanIDs) > 0 {
-		fp0, err := gs.FrequencyPlans.GetByID(gtw.FrequencyPlanIDs[0])
-		bandID = fp0.BandID
-		if err != nil {
-			return nil, err
-		}
-		fps[gtw.FrequencyPlanIDs[0]] = fp0
-		for i := 1; i < len(gtw.FrequencyPlanIDs); i++ {
-			fpn, err := gs.FrequencyPlans.GetByID(gtw.FrequencyPlanIDs[i])
-			if err != nil {
-				return nil, err
-			}
-			if fpn.BandID != fp0.BandID {
-				return nil, errFrequencyPlansNotFromSameBand
-			}
-			fps[gtw.FrequencyPlanIDs[i]] = fpn
-		}
-	} else {
-		return nil, errFrequencyPlansNotFromSameBand
-	}
-
-	conn, err := io.NewConnection(ctx, frontend, gtw, bandID, fps, gtw.EnforceDutyCycle, gtw.ScheduleAnytimeDelay)
+	conn, err := io.NewConnection(ctx, frontend, gtw, gs.FrequencyPlans, gtw.EnforceDutyCycle, gtw.ScheduleAnytimeDelay)
 	if err != nil {
 		return nil, err
 	}
@@ -433,13 +410,13 @@ func (gs *GatewayServer) Connect(ctx context.Context, frontend io.Frontend, ids 
 	logger.Info("Connected")
 	go gs.handleUpstream(conn)
 
-	for _, handler := range gs.upstreamHandlers {
-		go func(handler upstream.Handler) {
-			logger := log.FromContext(ctx).WithField("handler", handler.GetHostName())
+	for name, handler := range gs.upstreamHandlers {
+		go func(name string, handler upstream.Handler) {
+			logger := log.FromContext(ctx).WithField("handler", name)
 			if err := handler.ConnectGateway(conn.Context(), ids, conn); err != nil {
 				logger.WithError(err).Warn("Failed to connect gateway on upstream")
 			}
-		}(handler)
+		}(name, handler)
 	}
 	return conn, nil
 }
@@ -504,8 +481,8 @@ func (gs *GatewayServer) handleUpstream(conn *io.Connection) {
 			case item := <-host.handleCh:
 				ctx := item.ctx
 				switch msg := item.val.(type) {
-				case *ttnpb.UplinkMessage:
-					registerReceiveUplink(ctx, conn.Gateway(), msg, host.name)
+				case *ttnpb.GatewayUplinkMessage:
+					registerReceiveUplink(ctx, conn.Gateway(), msg.UplinkMessage, host.name)
 					drop := func(ids ttnpb.EndDeviceIdentifiers, err error) {
 						logger := logger.WithError(err)
 						if ids.JoinEUI != nil {
@@ -518,9 +495,9 @@ func (gs *GatewayServer) handleUpstream(conn *io.Connection) {
 							logger = logger.WithField("dev_addr", *ids.DevAddr)
 						}
 						logger.Debug("Drop message")
-						registerDropUplink(ctx, conn.Gateway(), msg, host.name, err)
+						registerDropUplink(ctx, conn.Gateway(), msg.UplinkMessage, host.name, err)
 					}
-					ids, err := lorawan.GetUplinkMessageIdentifiers(msg)
+					ids, err := lorawan.GetUplinkMessageIdentifiers(msg.RawPayload)
 					if err != nil {
 						drop(ttnpb.EndDeviceIdentifiers{}, err)
 						break
@@ -533,15 +510,17 @@ func (gs *GatewayServer) handleUpstream(conn *io.Connection) {
 						drop(ids, errHostHandle.WithCause(err).WithAttributes("host", item.host.name))
 						break
 					}
-					registerForwardUplink(ctx, conn.Gateway(), msg, item.host.name)
+					registerForwardUplink(ctx, conn.Gateway(), msg.UplinkMessage, item.host.name)
 				case *ttnpb.GatewayStatus:
 					registerReceiveStatus(ctx, conn.Gateway(), msg)
-					for _, handler := range gs.upstreamHandlers {
-						if err := handler.HandleStatus(ctx, conn.Gateway().GatewayIdentifiers, msg); err != nil {
-							registerForwardStatus(ctx, conn.Gateway(), msg, item.host.name)
-						} else {
-							registerDropStatus(ctx, conn.Gateway(), msg, item.host.name, err)
-						}
+					handler := item.host.handler(nil)
+					if handler == nil {
+						break
+					}
+					if err := handler.HandleStatus(ctx, conn.Gateway().GatewayIdentifiers, msg); err != nil {
+						registerForwardStatus(ctx, conn.Gateway(), msg, item.host.name)
+					} else {
+						registerDropStatus(ctx, conn.Gateway(), msg, item.host.name, err)
 					}
 				}
 			}
@@ -549,7 +528,8 @@ func (gs *GatewayServer) handleUpstream(conn *io.Connection) {
 	}
 
 	hosts := make([]*upstreamHost, 0, len(gs.upstreamHandlers))
-	for _, handler := range gs.upstreamHandlers {
+	for name, handler := range gs.upstreamHandlers {
+		handler := handler
 		passDevAddr := func(prefixes []types.DevAddrPrefix, devAddr types.DevAddr) bool {
 			for _, prefix := range prefixes {
 				if devAddr.HasPrefix(prefix) {
@@ -559,7 +539,7 @@ func (gs *GatewayServer) handleUpstream(conn *io.Connection) {
 			return false
 		}
 		hosts = append(hosts, &upstreamHost{
-			name: handler.GetHostName(),
+			name: name,
 			handler: func(ids *ttnpb.EndDeviceIdentifiers) upstream.Handler {
 				if ids != nil && ids.DevAddr != nil && !passDevAddr(handler.GetDevAddrPrefixes(), *ids.DevAddr) {
 					return nil
@@ -615,7 +595,7 @@ func (gs *GatewayServer) handleUpstream(conn *io.Connection) {
 				select {
 				case host.handleCh <- item:
 				case <-time.After(upstreamHandlerBusyTimeout):
-					logger.WithField("host", host).Warn("Upstream handlers busy, drop message")
+					logger.WithField("name", host.name).Warn("Upstream handler busy, drop message")
 					switch msg := val.(type) {
 					case *ttnpb.UplinkMessage:
 						registerFailUplink(ctx, conn.Gateway(), msg, host.name)

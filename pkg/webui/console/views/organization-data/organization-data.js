@@ -24,20 +24,12 @@ import OrganizationEvents from '../../containers/organization-events'
 import sharedMessages from '../../../lib/shared-messages'
 import PropTypes from '../../../lib/prop-types'
 
-import style from './organization-data.styl'
-
 const m = defineMessages({
   orgData: 'Organization Data',
 })
 
 @withBreadcrumb('orgs.single.data', function(props) {
-  return (
-    <Breadcrumb
-      path={`/organizations/${props.orgId}/data`}
-      icon="data"
-      content={sharedMessages.data}
-    />
-  )
+  return <Breadcrumb path={`/organizations/${props.orgId}/data`} content={sharedMessages.data} />
 })
 export default class Data extends React.Component {
   static propTypes = {
@@ -51,7 +43,7 @@ export default class Data extends React.Component {
       <Container>
         <PageTitle hideHeading title={m.orgData} />
         <Row>
-          <Col className={style.wrapper}>
+          <Col>
             <OrganizationEvents orgId={orgId} />
           </Col>
         </Row>
