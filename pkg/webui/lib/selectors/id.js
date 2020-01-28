@@ -100,11 +100,21 @@ export const getPubsubId = function (pubsub = {}) {
   return getByPath(pubsub, 'ids.pub_sub_id')
 }
 
+
+export const combinedLoracloudDASIds = (devId, port) => `${devId}/${port}`
+export const extractLoracloudDASIdFromCombinedId = function (combinedId) {
+  if (typeof combinedId === 'string') {
+    const parts = combinedId.split('/')
+    if (parts.length === 2) {
+      return parts[1]
+    }
+  }
+  return combinedId
+}
 export const getLoracloudDASId = function (loracloudDAS = {}) {
-  console.log(["getLoracloudDASId", loracloudDAS])
-  const loracloudDASId = `${getByPath(loracloudDAS, 'ids.end_device_ids.device_id')}#${getByPath(loracloudDAS, 'ids.f_port')}`
-  console.log(["id", loracloudDASId])
-  return loracloudDASId
+  const devId = getByPath(loracloudDAS, 'ids.end_device_ids.device_id')
+  const port = getByPath(loracloudDAS, 'ids.f_port')
+  return combinedLoracloudDASIds(devId, port)
 }
 
 export const getUserId = function (user = {}) {

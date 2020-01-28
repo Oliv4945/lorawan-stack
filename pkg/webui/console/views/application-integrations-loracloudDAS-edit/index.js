@@ -43,6 +43,8 @@ import { getLoracloudDAS } from '../../store/actions/loracloudDASs'
 import api from '../../api'
 import PropTypes from '../../../lib/prop-types'
 
+import { extractLoracloudDASIdFromCombinedId } from '../../../lib/selectors/id'
+
 const m = defineMessages({
   editLoracloudDAS: 'Edit LoRaCloud integration',
   updateSuccess: 'Successfully updated LoRaCloud DAS integration',
@@ -54,12 +56,29 @@ const loracloudDASEntitySelector = [
   'data',
 ]
 
+// TODO: Dirty fix
+function idDirtyWorkaround(state) {
+  console.log("test", state, state.loracloudDASs)
+  var newEntity = {}
+  if (Object.keys(state.loracloudDASs.entities).length > 0) {
+    Object.keys(state.loracloudDASs.entities).forEach(function(loracloudDASId) {
+      console.log("state", state.loracloudDASs.entities[loracloudDASId])
+      console.log("loracloudDASId", loracloudDASId)
+      console.log("etraxt", extractLoracloudDASIdFromCombinedId(loracloudDASId))
+      newEntity[extractLoracloudDASIdFromCombinedId(loracloudDASId)] = state.loracloudDASs.entities[loracloudDASId]
+      console.log(newEntity)
+    });
+  }
+  state.loracloudDASs.entities = newEntity
+  selectLoracloudDASFetching(state)
+}
+
 @connect(
   state => ({
     appId: selectSelectedApplicationId(state),
     loracloudDAS: selectSelectedLoracloudDAS(state),
     deviceId: selectSelectedDeviceId(state),
-    fetching: selectLoracloudDASFetching(state),
+    fetching: idDirtyWorkaround(state),
     error: selectLoracloudDASError(state),
   }),
   function (dispatch, { match }) {
@@ -102,7 +121,7 @@ export default class ApplicationLoracloudDASEdit extends Component {
     appId: PropTypes.string.isRequired,
     match: PropTypes.match.isRequired,
     navigateToList: PropTypes.func.isRequired,
-    loracloudDAS: PropTypes.loracloudDAS.isRequired,
+    // loracloudDAS: PropTypes.loracloudDAS.isRequired,
   }
 
   async handleSubmit(updatedLoracloudDAS) {

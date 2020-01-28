@@ -26,7 +26,7 @@ const mapLoracloudDASHeadersTypeToFormValue = headersType =>
 
 export const mapLoracloudDASToFormValues = loracloudDAS => ({
   loracloudDAS_id: loracloudDAS.ids.loracloudDAS_id,
-  //  TODO: Should return a value if assocaition does not hardcode URL
+  //  TODO: Should return a value if association does not hardcode URL
   base_url: 'https://dms.loracloud.com',
   device_id: loracloudDAS.ids.end_device_ids.device_id,
   token: loracloudDAS.data.token,
@@ -50,7 +50,8 @@ export const mapFormValuesToLoracloudDAS = function (values, appId) {
       application_ids: {
         application_id: appId,
       },
-      loracloudDAS_id: values.loracloudDAS_id,
+      // TODO: Should no be commented ?
+      // loracloudDAS_id: values.loracloudDAS_id,
     },
     base_url: values.base_url,
     format: values.format,

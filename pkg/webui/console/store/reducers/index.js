@@ -30,6 +30,7 @@ import {
   getCombinedDeviceId,
   getApiKeyId,
   getCollaboratorId,
+  getCombinedLoracloudDASId,
 } from '../../../lib/selectors/id'
 import user from './user'
 import users from './users'
