@@ -121,7 +121,7 @@ export default class ApplicationLoracloudDASEdit extends Component {
     appId: PropTypes.string.isRequired,
     match: PropTypes.match.isRequired,
     navigateToList: PropTypes.func.isRequired,
-    // loracloudDAS: PropTypes.loracloudDAS.isRequired,
+    loracloudDAS: PropTypes.loracloudDAS.isRequired,
   }
 
   async handleSubmit(updatedLoracloudDAS) {

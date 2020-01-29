@@ -50,8 +50,7 @@ export const mapFormValuesToLoracloudDAS = function (values, appId) {
       application_ids: {
         application_id: appId,
       },
-      // TODO: Should no be commented ?
-      // loracloudDAS_id: values.loracloudDAS_id,
+      loracloudDAS_id: values.loracloudDAS_id,
     },
     base_url: values.base_url,
     format: values.format,
