@@ -62,10 +62,11 @@ function idDirtyWorkaround(state) {
   var newEntity = {}
   if (Object.keys(state.loracloudDASs.entities).length > 0) {
     Object.keys(state.loracloudDASs.entities).forEach(function(loracloudDASId) {
-      console.log("state", state.loracloudDASs.entities[loracloudDASId])
-      console.log("loracloudDASId", loracloudDASId)
-      console.log("etraxt", extractLoracloudDASIdFromCombinedId(loracloudDASId))
-      newEntity[extractLoracloudDASIdFromCombinedId(loracloudDASId)] = state.loracloudDASs.entities[loracloudDASId]
+      var deviceTest = state.router.location.pathname
+      deviceTest = deviceTest.split("/")[5]
+      if (state.loracloudDASs.entities[loracloudDASId].ids.end_device_ids.device_id == deviceTest) {
+        newEntity[extractLoracloudDASIdFromCombinedId(loracloudDASId)] = state.loracloudDASs.entities[loracloudDASId]
+      }
       console.log(newEntity)
     });
   }
