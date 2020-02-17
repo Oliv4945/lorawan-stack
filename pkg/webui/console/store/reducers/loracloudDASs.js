@@ -24,9 +24,11 @@ const defaultState = {
 const loracloudDASs = function (state = defaultState, { type, payload }) {
   switch (type) {
     case GET_LORACLOUDDAS:
+      console.log("GET_LORACLOUDDAS", payload, state)
+      // TODO: replace by get
       return {
         ...state,
-        selectedLoracloudDAS: payload.loracloudDASId,
+        selectedLoracloudDAS: `${payload.deviceId}/${payload.loracloudDASId}`,
       }
     case GET_LORACLOUDDAS_SUCCESS:
       return {

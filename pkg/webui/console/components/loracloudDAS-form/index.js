@@ -99,10 +99,12 @@ export default class LoracloudDASForm extends Component {
     let initialValues = blankValues
     console.log(["initialLoracloudDASValue", this, initialLoracloudDASValue])
     // TODO: Dirty fix
+    /*
     if ((typeof initialLoracloudDASValue != 'undefined') && (typeof initialLoracloudDASValue.data == "undefined")) {
       initialLoracloudDASValue.data = {}
       initialLoracloudDASValue.data.token = ""
     }
+    */
     if (update && initialLoracloudDASValue) {
       initialValues = mapLoracloudDASToFormValues(initialLoracloudDASValue)
     }

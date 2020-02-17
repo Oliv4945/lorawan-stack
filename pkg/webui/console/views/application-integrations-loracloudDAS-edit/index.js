@@ -79,7 +79,7 @@ function idDirtyWorkaround(state) {
     appId: selectSelectedApplicationId(state),
     loracloudDAS: selectSelectedLoracloudDAS(state),
     deviceId: selectSelectedDeviceId(state),
-    fetching: idDirtyWorkaround(state),
+    fetching: selectLoracloudDASFetching(state),
     error: selectLoracloudDASError(state),
   }),
   function (dispatch, { match }) {
