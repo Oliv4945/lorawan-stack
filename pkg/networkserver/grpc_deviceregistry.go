@@ -424,7 +424,13 @@ func (ns *NetworkServer) Set(ctx context.Context, req *ttnpb.SetEndDeviceRequest
 				"frequency_plan_id",
 				"lorawan_phy_version",
 			) {
-				_, _, err := getDeviceBandVersion(dev, ns.FrequencyPlans)
+				if !ttnpb.HasAnyField(sets, "frequency_plan_id") {
+					req.EndDevice.FrequencyPlanID = dev.FrequencyPlanID
+				}
+				if !ttnpb.HasAnyField(sets, "lorawan_phy_version") {
+					req.EndDevice.LoRaWANPHYVersion = dev.LoRaWANPHYVersion
+				}
+				_, _, err := getDeviceBandVersion(&req.EndDevice, ns.FrequencyPlans)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -495,6 +501,8 @@ func (ns *NetworkServer) Set(ctx context.Context, req *ttnpb.SetEndDeviceRequest
 			if !ttnpb.HasAnyField([]string{"session"}, sets...) || req.EndDevice.Session == nil {
 				return &req.EndDevice, sets, nil
 			}
+		} else if req.EndDevice.LoRaWANVersion.RequireDevEUIForABP() && req.EndDevice.DevEUI == nil {
+			return nil, nil, errNoDevEUI
 		}
 
 		if err := ttnpb.RequireFields(sets,
@@ -563,22 +571,8 @@ func (ns *NetworkServer) Set(ctx context.Context, req *ttnpb.SetEndDeviceRequest
 		return ttnpb.FilterGetEndDevice(dev, req.FieldMask.Paths...)
 	}
 
-	var downAt time.Time
-	_, phy, err := getDeviceBandVersion(dev, ns.FrequencyPlans)
-	if err != nil {
-		log.FromContext(ctx).WithError(err).Warn("Failed to determine device band")
-		downAt = timeNow().UTC()
-	} else {
-		var ok bool
-		downAt, ok = nextDataDownlinkAt(ctx, dev, phy, ns.defaultMACSettings)
-		if !ok {
-			return ttnpb.FilterGetEndDevice(dev, req.FieldMask.Paths...)
-		}
-	}
-	downAt = downAt.Add(-nsScheduleWindow)
-	log.FromContext(ctx).WithField("start_at", downAt).Debug("Add downlink task after device set")
-	if err := ns.downlinkTasks.Add(ctx, dev.EndDeviceIdentifiers, downAt, true); err != nil {
-		log.FromContext(ctx).WithError(err).Error("Failed to add downlink task after device set")
+	if err := ns.updateDataDownlinkTask(ctx, dev, time.Time{}); err != nil {
+		log.FromContext(ctx).WithError(err).Error("Failed to update downlink task queue after device set")
 	}
 	return ttnpb.FilterGetEndDevice(dev, req.FieldMask.Paths...)
 }
